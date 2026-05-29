@@ -1,0 +1,309 @@
+import { useMemo, useState } from 'react';
+import { useParams } from "react-router-dom"
+import ProductCard from '../components/ProductCard';
+import { useNavigate } from "react-router-dom"
+import { useOutletContext } from 'react-router-dom';
+
+export function Products() {
+  const {
+      products,
+      brands,
+      categories
+    } = useOutletContext();
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [sortBy, setSortBy] = useState('name');
+  const { category, slug } = useParams();
+  const navigate = useNavigate();
+  const handleNavigate = (product) => {
+    navigate(`/products/detail/${product._id}`, {state: {product}})
+    console.log('clicked to navigate')
+  }
+  console.log(products)
+  console.log(brands)
+  console.log(categories)
+  const filteredAndSortedProducts = useMemo(() => {
+
+  let filtered = [...products];
+
+  // =========================
+  // BRAND FILTER
+  // /products/brands/rm-williams
+  // =========================
+
+  if (category === "brands" && slug) {
+
+      const matchedBrand = brands.find(
+        (brand) => brand.name === slug
+      );
+      
+      if (!matchedBrand) return [];
+      
+      filtered = filtered.filter(
+        (product) =>
+          String(
+            product.brandId?._id ||
+            product.brandId
+          ) === String(matchedBrand._id)
+      );
+    }
+
+    // =========================
+    // CATEGORY + SUBCATEGORY
+    // /products/accessories/belts
+    // =========================
+
+    else if (category && slug) {
+
+      // parent category
+      const parentCategory = categories.find(
+        (cat) => cat.slug === category
+      );
+
+      if (!parentCategory) return [];
+
+      // sub category
+      const subCategory =
+        parentCategory.subCategories?.find(
+          (sub) => sub.slug === slug
+        );
+
+      if (!subCategory) return [];
+
+      // FILTER USING _id
+      filtered = filtered.filter(
+        (product) =>
+          String(
+            product.categoryId?._id ||
+            product.categoryId
+          ) === String(subCategory._id)
+      );
+    }
+
+    // =========================
+    // TOP CATEGORY
+    // /products/accessories
+    // =========================
+
+    else if (category) {
+
+      const matchedCategory = categories.find(
+        (cat) => cat.slug === category
+      );
+
+      if (!matchedCategory) return [];
+
+      // all subcategory ids
+      const subCategoryIds =
+        matchedCategory.subCategories?.map(
+          (sub) => String(sub._id)
+        ) || [];
+
+      filtered = filtered.filter((product) => {
+
+        const productCategoryId = String(
+          product.categoryId?._id ||
+          product.categoryId
+        );
+
+        return subCategoryIds.includes(
+          productCategoryId
+        );
+      });
+    }
+
+    // =========================
+    // SIDEBAR FILTER
+    // =========================
+
+    if (selectedCategory !== "all") {
+
+      filtered = filtered.filter(
+        (product) =>
+          String(
+            product.categoryId?._id ||
+            product.categoryId
+          ) === String(selectedCategory)
+      );
+    }
+
+    // =========================
+    // SORTING
+    // =========================
+
+    return filtered.sort((a, b) => {
+
+      switch (sortBy) {
+
+        case "price-low":
+          return a.basePrice - b.basePrice;
+
+        case "price-high":
+          return b.basePrice - a.basePrice;
+
+        default:
+          return a.name.localeCompare(b.name);
+      }
+    });
+
+  }, [
+    products,
+    brands,
+    categories,
+    category,
+    slug,
+    selectedCategory,
+    sortBy
+  ]);
+
+  return (
+    <main className="min-h-screen bg-[#f6f1e6]">
+      <div className="mx-auto max-w-7xl px-4 py-8 lg:px-8">
+
+        <div className="mb-4">
+          <p className="text-sm text-[#7b6f5c]">
+            Home / product & Shoes / Safety product
+          </p>
+        </div>
+
+        <div className="mb-10">
+          <h1 className="text-4xl lg:text-5xl font-bold text-[#2b2b2b] mb-4">
+            Safety product
+          </h1>
+
+          <p className="text-[#6f6658] max-w-3xl leading-relaxed">
+            Shop premium Australian safety product and workwear.
+          </p>
+        </div>
+
+        <div className="flex flex-col lg:flex-row gap-8">
+
+          {/* Sidebar */}
+          <aside className="lg:w-72 flex-shrink-0">
+            <div className="bg-[#fffdf8] border border-[#d8cdbd] rounded-2xl p-6 sticky top-24">
+
+              <div className="flex items-center gap-2 mb-6">
+                <span className="text-[#245441] text-lg">
+                  ⚙️
+                </span>
+
+                <h2 className="text-xl font-semibold text-[#2b2b2b]">
+                  Filters
+                </h2>
+              </div>
+
+              {/* Categories */}
+              <div className="mb-8">
+                <h3 className="text-sm font-semibold uppercase tracking-wide text-[#7b6f5c] mb-4">
+                  Categories
+                </h3>
+                <div className="space-y-2">
+                  <label className="
+                        flex items-center gap-3 w-full
+                        p-3 rounded-xl cursor-pointer
+                        hover:bg-[#f3ede2] transition-colors
+                      ">
+                  <input
+                    type="radio"
+                    value="all"
+                    className="h-4 w-4"
+                    checked={selectedCategory === "all"}
+                    onChange={(e) =>
+                      setSelectedCategory(e.target.value)
+                    }
+                  />
+                  <span>All Categories</span>
+                </label>
+                  {categories.map((category) => (
+                    <label
+                      key={category.slug}
+                      className="
+                        flex items-center gap-3 w-full
+                        p-3 rounded-xl cursor-pointer
+                        hover:bg-[#f3ede2] transition-colors
+                      "
+                    >
+                      <input
+                        type="radio"
+                        value={category._id}
+                        checked={selectedCategory === category._id}
+                        onChange={(e) =>
+                          setSelectedCategory(e.target.value)
+                        }
+                        className="h-4 w-4"
+                      />
+
+                      <span className="text-[#2b2b2b]">
+                        {category.name}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Sort */}
+              <div>
+                <h3 className="text-sm font-semibold uppercase tracking-wide text-[#7b6f5c] mb-4">
+                  Sort By
+                </h3>
+
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="
+                    w-full rounded-xl border border-[#d8cdbd]
+                    bg-white px-4 py-3 outline-none
+                    focus:ring-2 focus:ring-[#245441]
+                  "
+                >
+                  <option value="name">Name</option>
+                  <option value="price-low">Price: Low to High</option>
+                  <option value="price-high">Price: High to Low</option>
+                  <option value="rating">Highest Rated</option>
+                </select>
+              </div>
+            </div>
+          </aside>
+
+          {/* Products */}
+            <section className="flex-1">
+
+              <div className="flex items-center justify-between mb-6">
+                <p className="text-[#6f6658]">
+                  {filteredAndSortedProducts.length} products found
+                </p>
+              </div>
+
+              {filteredAndSortedProducts.length === 0 ? (
+
+                <div className="text-center py-20">
+                  <h2 className="text-2xl font-bold text-[#2b2b2b]">
+                    No Products Found
+                  </h2>
+
+                  <p className="text-[#6f6658] mt-2">
+                    This category does not exist or has no products.
+                  </p>
+                </div>
+
+              ) : (
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                  {filteredAndSortedProducts.map((product) => (
+                    <ProductCard
+                      key={product._id}
+                      product={product}
+                      onClick={() => handleNavigate(product)}
+                    />
+                  ))}
+                </div>
+
+              )}
+
+            </section>
+        </div>
+      </div>
+    </main>
+  );
+}
+
+export default Products;
