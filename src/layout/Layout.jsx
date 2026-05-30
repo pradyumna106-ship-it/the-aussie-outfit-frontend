@@ -41,6 +41,7 @@ function Layout() {
           getUserNotifications(userId)
         ]);
         console.log("user Notification", userRes.data)
+        console.log("products: ", productRes.data.data)
         setProducts(productRes.data.data || []);
         setBrands(brandRes.data.data || []);
         setCategories(categoryRes.data.data || []);
@@ -53,7 +54,7 @@ function Layout() {
     }
 
     loadDatas();
-  }, [user]);
+  }, []);
     const markAsRead = async (notification) => {
 
       try {
