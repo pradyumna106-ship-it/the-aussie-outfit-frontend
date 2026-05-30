@@ -9,7 +9,7 @@ import { getCategories,getBrands,getProducts }from "../api/product.api.js"
 import { useOutletContext } from "react-router-dom";
 import BrandMarquee from "../components/BrandMarquee";
 import { getBanners } from '../api/admin.api.js';
-
+import { useAuth } from '../context/AuthContext';
 const trustItems = [
   {
     title: "43+ years",
@@ -33,6 +33,7 @@ const trustItems = [
 
 export default function Home() {
   const navigate = useNavigate();
+  const { isAuthenticated, user } = useAuth()
   const {
       products,
       brands,
@@ -49,6 +50,7 @@ export default function Home() {
   }
   useEffect(() => {
     async function loadBanners() {
+      if (!isAuthenticated || !user) return;
       const res =await getBanners();
       console.log("Banners data: ",res.data);
       const response = res;
