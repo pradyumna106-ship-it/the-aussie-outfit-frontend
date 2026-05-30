@@ -36,13 +36,14 @@ function Layout() {
         const productRes = await getProducts();
         const brandRes = await getBrands();
         const categoryRes = await getCategories();
-
+        console.log(productRes);
+        console.log(brandRes)
+        console.log(categoryRes)
         let userRes = { data: { data: [] } };
-
         if (userId) {
           userRes = await getUserNotifications(userId);
         }
-
+        console.log(userRes)
         setProducts(productRes.data.data || []);
         setBrands(brandRes.data.data || []);
         setCategories(categoryRes.data.data || []);
