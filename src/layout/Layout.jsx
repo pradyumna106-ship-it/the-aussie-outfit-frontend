@@ -8,43 +8,130 @@ import Cart from "../components/Cart";
 import { getBrands, getCategories, getProducts } from "../api/product.api.js";
 import { useAuth } from "../context/AuthContext.jsx";
 import { isTokenExpired } from "../utils/token.js"
+import { updateNotification, getUserNotifications } from "../api/notification.api.js";
+import NotificationPanel from "../components/NotificationPanel"
 function Layout() {
   const [cartOpen, setCartOpen] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState([])
   const [products, setProducts] = useState([]);
   const [brands, setBrands] = useState([]);
   const [categories, setCategories] = useState([]);
   const [productCount, setProductCount] = useState(0);
   const navigate = useNavigate()
-  const { getNewAccessToken, isAuthenticated, loading, setLoading } = useAuth() 
+  const { getNewAccessToken, isAuthenticated, loading, setLoading, user } = useAuth() 
   useEffect(() => {
-      async function loadDatas() {
-        try {
-          const token = localStorage.getItem("token");
-            if (isTokenExpired(token)) {
-              await getNewAccessToken()
-              console.log("Token expired");
-            } else {
-              console.log("Token valid");
-            }
-          const [productRes,brandRes,categoryRes] = await Promise.all([
-            getProducts(),
-            getBrands(),
-            getCategories()
-          ]);
+    async function loadDatas() {
+      try {
+        if (!user) return;
+        const token = localStorage.getItem("token");
+        if (isTokenExpired(token)) {
+          await getNewAccessToken();
+        }
+        const userId = user?.id;
+        const [
+          productRes,
+          brandRes,
+          categoryRes,
+          userRes
+        ] = await Promise.all([
+          getProducts(),
+          getBrands(),
+          getCategories(),
+          getUserNotifications(userId)
+        ]);
+        console.log("user Notification", userRes.data)
         setProducts(productRes.data.data || []);
         setBrands(brandRes.data.data || []);
         setCategories(categoryRes.data.data || []);
-        setProductCount(productRes.data.count);
-  
-        }catch(error) {
-          console.error(error)
-        }
+        setProductCount(productRes.data.count || 0);
+        setNotifications(userRes.data.data || []);
+
+      } catch (error) {
+        console.error(error);
       }
-      loadDatas()
-    },[])
-    const shopping = [
-        { label: "Akubra", path:"/boots"}
-    ]
+    }
+
+    loadDatas();
+  }, [user]);
+    const markAsRead = async (notification) => {
+
+      try {
+
+        // UPDATE UI
+
+        setNotifications((prev) =>
+          prev.map((n) =>
+            (n._id || n.id) === (notification._id || notification.id)
+              ? {
+                  ...n,
+                  isRead: true,
+                  status: "READ",
+                  readAt: new Date()
+                }
+              : n
+          )
+        );
+
+        // API CALL
+
+        await updateNotification(notification._id || notification.id, {
+          isRead: true,
+          status: "READ",
+          readAt: new Date()
+        });
+
+      } catch (error) {
+
+        console.error(
+          "Failed to mark notification as read:",
+          error
+        );
+      }
+    };
+
+    const markAllAsRead = async () => {
+
+      try {
+
+        // GET ALL UNREAD IDS
+
+        const unreadNotifications = notifications.filter(
+          (notification) => !notification.isRead
+        );
+
+        // API CALLS
+
+        await Promise.all(
+          unreadNotifications.map((notification) =>
+            updateNotification(notification._id || notification.id, {
+              isRead: true,
+              status: "READ",
+              readAt: new Date()
+            })
+          )
+        );
+
+        // UPDATE UI
+
+        setNotifications((prev) =>
+          prev.map((notification) => ({
+            ...notification,
+            isRead: true,
+            status: "READ",
+            readAt: new Date()
+          }))
+        );
+
+      } catch (error) {
+
+        console.error(
+          "Failed to mark all notifications as read:",
+          error
+        );
+      }
+    };
+
   return (
     <div className="min-h-screen bg-[#f6f1e6] flex flex-col">
       
@@ -56,10 +143,20 @@ function Layout() {
         onCartToggle={() => setCartOpen((prev) => !prev)}
         brands={brands}
         categories={categories}
+        setShowNotifications={setShowNotifications}
+        showNotifications={showNotifications}
       />
 
       {/* MAIN CONTENT */}
       <main className="flex-1 relative">
+        {showNotifications && (
+            <NotificationPanel
+              notifications={notifications}
+              onClose={() => setShowNotifications(false)}
+              onMarkAsRead={markAsRead}
+              onMarkAllAsRead={markAllAsRead}
+            />
+          )}
         <Outlet
           context={{
             products,

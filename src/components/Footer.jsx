@@ -1,9 +1,33 @@
 import { useNavigate } from "react-router-dom";
+import logo from "../assets/logo-black.png"
+import { useState } from "react";
 function Footer() {
   const navigate = useNavigate();
 
   const handleNavigate = (category) => {
     navigate(`/products/${category}`);
+  };
+  const [email, setEmail] = useState("");
+  const [category, setCategory] = useState("General");
+  const handleSubscribe = async () => {
+    try {
+      await subscribeNewsletter({
+        email,
+        category
+      });
+
+      alert(
+        "Subscribed successfully!"
+      );
+
+      setEmail("");
+      setCategory("General");
+    } catch (error) {
+      alert(
+        error.response?.data?.message ||
+          "Subscription failed"
+      );
+    }
   };
   const footerData = {
     explore: [
@@ -76,28 +100,28 @@ function Footer() {
                 
                 {/* SELECT */}
                 <select
-                  className="
-                    h-[52px]
-                    px-4
-                    bg-white
-                    border
-                    border-[#b9b1a4]
-                    text-[#1b1610]
-                    outline-none
-                    w-full
-                    md:w-[220px]
-                  "
+                  value={category}
+                  onChange={(e) =>
+                    setCategory(e.target.value)
+                  }
                 >
-                  <option>Select an option...</option>
-                  <option>Men</option>
-                  <option>Women</option>
-                  <option>Workwear</option>
-                  <option>Boots</option>
+                  <option value="General">
+                    Select an option...
+                  </option>
+
+                  <option value="Men">Men</option>
+                  <option value="Women">Women</option>
+                  <option value="Workwear">
+                    Workwear
+                  </option>
+                  <option value="Boots">Boots</option>
                 </select>
 
                 {/* EMAIL */}
                 <input
                   type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="ENTER EMAIL ADDRESS"
                   className="
                     h-[52px]
@@ -107,12 +131,17 @@ function Footer() {
                     border-[#b9b1a4]
                     outline-none
                     text-[#1b1610]
+                    placeholder:text-[#8f7c61]
                     flex-1
+                    min-w-0
+                    focus:border-[#245441]
+                    transition-colors
                   "
                 />
 
                 {/* BUTTON */}
                 <button
+                  onClick={handleSubscribe}
                   className="
                     h-[52px]
                     px-8
@@ -200,7 +229,7 @@ function Footer() {
           {/* LOGO */}
           <div className="flex justify-center mb-6">
             <h2 className="text-3xl md:text-4xl font-black text-[#1b1610] tracking-wide">
-              EVERYTHING AUSTRALIAN
+              <img src={logo} alt="Everything Australia" width={200}/>
             </h2>
           </div>
 

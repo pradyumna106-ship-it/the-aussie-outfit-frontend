@@ -1,14 +1,27 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-const HeroSection = () => {
+const HeroSection = ({ banners, papagination}) => {
   const navigate = useNavigate();
-
+  const [currentBanner, setCurrentBanner] = useState(0);
   const { user } = useAuth();
-
   const isLoggedIn = user;
+  useEffect(() => {
+    if (!isLoggedIn || !banners?.length) return;
+    const interval = setInterval(() => {
+      setCurrentBanner((prev) =>
+        prev === banners.length - 1
+          ? 0
+          : prev + 1
+      );
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [isLoggedIn, banners]);
+  const banner = banners?.length > 0
+    ? banners[currentBanner]
+    : null;
   const handleShopBoots = () => {
     navigate("/products/Boots");
   };
@@ -22,6 +35,11 @@ const HeroSection = () => {
 
   const handleRegister = () => {
     navigate("/register");
+  };
+  const handleBannerClick = () => {
+    if (banner?.targetUrl) {
+      navigate(banner.targetUrl);
+    }
   };
   return (
     <>
@@ -85,8 +103,9 @@ const HeroSection = () => {
                     leading-tight
                   "
                 >
-                  Built tough for work, weekends,
-                  and the outback.
+                  {isLoggedIn && banners?.length
+                    ? banners[currentBanner]?.title
+                    : "Built tough for work, weekends, and the outback."}
                 </h1>
 
                 <p
@@ -99,11 +118,13 @@ const HeroSection = () => {
                     max-w-2xl
                   "
                 >
-                  A cleaner MERN storefront concept
-                  for Everything Australian, focused
-                  on fast category discovery,
-                  confident sizing, trusted reviews,
-                  and low-friction checkout.
+                  {isLoggedIn && banners?.length
+                    ? banners[currentBanner]?.subtitle
+                    : `A cleaner MERN storefront concept
+                      for Everything Australian, focused
+                      on fast category discovery,
+                      confident sizing, trusted reviews,
+                      and low-friction checkout.`}
                 </p>
               </div>
                  {/* BUTTONS */}
@@ -123,7 +144,7 @@ const HeroSection = () => {
                   <>
                     <button
                       onClick={
-                        handleShopBoots
+                        handleBannerClick
                       }
                       className="
                         bg-[#c66e1c]
@@ -252,7 +273,11 @@ const HeroSection = () => {
 
                 {/* IMAGE */}
                 <img
-                  src="https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?q=80&w=1200&auto=format&fit=crop"
+                  src={
+                    isLoggedIn && banners?.length
+                      ? banners[currentBanner]?.imageUrl
+                      : "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?q=80&w=1200&auto=format&fit=crop"
+                  }
                   alt="Australian Boots"
                   className="
                     relative

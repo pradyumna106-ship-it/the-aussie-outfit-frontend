@@ -14,21 +14,15 @@ export function FavouriteProvider({
   const [favourites, setFavourites] =
     useState([]);
 
-  const toggleFavourite = (
-    product
-  ) => {
-
+  const toggleFavourite = (product) => {
     setFavourites((prev) =>
-
       prev.some(
         (p) => p._id === product._id
       )
-
         ? prev.filter(
             (p) =>
               p._id !== product._id
           )
-
         : [...prev, product]
     );
   };

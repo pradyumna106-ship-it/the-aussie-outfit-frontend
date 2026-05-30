@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-import { getSalesReports } from "../api/admin.api.js";
+import { getSalesReports, deleteBanner } from "../api/admin.api.js";
 
 import SalesReportTable from "../components/SalesReportTable";
 import { useNavigate } from "react-router-dom";
@@ -26,6 +26,11 @@ export default function SalesReportsPage() {
     }
 
   };
+
+  const handleDelete = async (id) => {
+    const res = await deleteBanner(id);
+    console.log(res.data.data);
+  }
 
   useEffect(() => {
     fetchReports();
@@ -53,7 +58,7 @@ export default function SalesReportsPage() {
         Sales Reports
       </h1>
 
-      <SalesReportTable reports={reports} />
+      <SalesReportTable reports={reports} handleDelete={handleDelete}/>
 
     </div>
 

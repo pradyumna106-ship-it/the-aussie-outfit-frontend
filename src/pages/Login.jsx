@@ -162,6 +162,23 @@ export function Login() {
             </Link>
           </p>
         </div>
+        {/* FOOTER */}
+            <div className="mt-8 text-center">
+
+              <p className="text-[#6b6257]">
+
+                Are you a Admin?{" "}
+
+                <Link
+                  to="/admin/login"
+                  className="text-[#245441] font-semibold hover:underline"
+                >
+                  Admin Login
+                </Link>
+
+              </p>
+
+            </div>
       </div>
     </div>
   );

@@ -255,9 +255,9 @@ const OrderConfirm = () => {
 
               <div className="space-y-5">
 
-                {cart.map((item) => (
+                {cart.map((item, index) => (
                   <div
-                    key={item.id}
+                    key={index}
                     className="
                       flex
                       items-center

@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom"
 import { getCategories,getBrands,getProducts }from "../api/product.api.js"
 import { useOutletContext } from "react-router-dom";
 import BrandMarquee from "../components/BrandMarquee";
+import { getBanners } from '../api/admin.api.js';
 
 const trustItems = [
   {
@@ -37,7 +38,8 @@ export default function Home() {
       brands,
       categories
     } = useOutletContext();
-
+  const [banners,setBanners] = useState([])
+  const [pagination,setPagination] = useState({})
   console.log(products);
   console.log(brands);
   console.log(categories);
@@ -45,6 +47,16 @@ export default function Home() {
     navigate(`/products/detail/${product._id}`, { state: { product } });
     console.log('clicked to navigate')
   }
+  useEffect(() => {
+    async function loadBanners() {
+      const res =await getBanners();
+      console.log("Banners data: ",res.data);
+      const response = res;
+      setBanners(response.data.data || []);
+      setPagination(res.data.pagination || {});
+    }
+    loadBanners()
+  },[])
   
   return (
     <>
@@ -52,7 +64,7 @@ export default function Home() {
       <main className="w-full min-h-screen bg-[#f6f0e6]">
         
         {/* Hero */}
-        <HeroSection />
+        <HeroSection banners={banners} pagination={pagination} />
 
         <BrandMarquee brands={brands} />
 
@@ -87,6 +99,7 @@ export default function Home() {
               <CategoryCard
                 key={index}
                 title={category.name}
+                image={category.image}
                 onClick={() => {navigate(`/products/${category.name}`)}}
               />
             ))}

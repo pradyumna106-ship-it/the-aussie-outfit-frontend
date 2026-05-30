@@ -46,7 +46,6 @@ export function AuthProvider({ children }) {
         setRefreshToken(storedRefreshToken);
       }
       
-    checkAuth();
 
     } catch (error) {
 
@@ -216,7 +215,7 @@ export function AuthProvider({ children }) {
   return (
     <AuthContext.Provider
       value={{
-        user,
+        user: user,
         token,
         refreshToken,
         loading,

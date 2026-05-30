@@ -4,7 +4,7 @@ import ProductCard from "../components/ProductCard";
 import { useNavigate } from "react-router-dom";
 export default function Favorites() {
     const navigate = useNavigate()
-    const { favourites } = useFavourite();
+    const { favourites, } = useFavourite();
     const handleNavigate = (product) => {
         navigate(`/products/detail/${product._id}`, { state: { product } });
     }

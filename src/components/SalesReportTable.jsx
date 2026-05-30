@@ -1,5 +1,5 @@
 export default function SalesReportTable({
-  reports
+  reports, handleDelete
 }) {
 
   return (
@@ -83,6 +83,10 @@ export default function SalesReportTable({
 
             <th className="px-6 py-4 text-left">
               Generated At
+            </th>
+            
+            <th className="px-6 py-4 text-left">
+              Action
             </th>
 
           </tr>
@@ -185,6 +189,25 @@ export default function SalesReportTable({
                     report.generatedAt
                   ).toLocaleString()
                 }
+              </td>
+              <td className="px-6 py-4">
+                <button
+                    onClick={() =>
+                      handleDelete(report._id)
+                    }
+                    className="
+                      px-4
+                      py-2
+                      rounded-lg
+                      bg-red-600
+                      text-white
+                      text-sm
+                      hover:bg-red-700
+                      transition
+                    "
+                  >
+                    Delete
+                  </button>
               </td>
 
             </tr>

@@ -1,5 +1,4 @@
 // src/pages/Checkout.jsx
-
 import React,{ useEffect,useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
@@ -7,6 +6,8 @@ import { toast } from "sonner";
 import { getAddressesByUserId } from "../api/user.api.js"
 import { createOrder } from "../api/order.api.js";
 import { handlePayment } from "../utils/payment.js";
+import { sendOrderConfirmation } from "../api/notification.api.js"
+import { getCoupons } from "../api/admin.api.js";
 const PAYMENT_METHODS = [
   {id:"cash",label:"Cash on Delivery"},
   {id:"razorpay",label:"Razorpay"}
@@ -15,6 +16,11 @@ const CURRENCIES = [
   "INR","USD","EUR","GBP","AED","AUD","CAD","SGD","SAR"
 ]
 const Checkout = () => {
+  const [couponCode, setCouponCode] = useState("");
+  const [availableCoupons, setAvailableCoupons] = useState([]);
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [discountAmount, setDiscountAmount] = useState(0);
+
   const navigate = useNavigate();
   const [userAuth] = useState(
       JSON.parse(localStorage.getItem("user")) || {}
@@ -30,7 +36,7 @@ const Checkout = () => {
   const [currency,setCurrency] = useState("AUD")
   const shipping = subtotal > 250 ? 0 : 15;
   const [visiblePaymentButton, setVisiblePaymentButton] = useState(false);
-  const total = subtotal + shipping;
+  const total = subtotal + shipping - discountAmount;
   const [addresses, setAddresses] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState(null);
   useEffect(() => {
@@ -51,8 +57,73 @@ const Checkout = () => {
           toast.error("Failed to fetch addresses");
         }
     }
+    async function fetchCoupons() {
+      try {
+        const res = await getCoupons();
+
+        const activeCoupons = res.data.data.filter(
+          (coupon) =>
+            coupon.status === "active" &&
+            new Date(coupon.startsAt) <= new Date() &&
+            new Date(coupon.expiresAt) >= new Date()
+        );
+
+        setAvailableCoupons(activeCoupons);
+      } catch (error) {
+        console.error(error);
+      }
+    }
     fetchAddresses();
+    fetchCoupons();
   }, [])
+  const applyCoupon = () => {
+    const coupon = availableCoupons.find(
+      (c) => c.code.toUpperCase() === couponCode.toUpperCase()
+    );
+
+    if (!coupon) {
+      toast.error("Invalid coupon code");
+      return;
+    }
+
+    if (subtotal < coupon.minimumOrderAmount) {
+      toast.error(
+        `Minimum order amount is AUD ${coupon.minimumOrderAmount}`
+      );
+      return;
+    }
+
+    if (
+      coupon.usageLimit &&
+      coupon.usedCount >= coupon.usageLimit
+    ) {
+      toast.error("Coupon usage limit reached");
+      return;
+    }
+
+    let discount = 0;
+
+    if (coupon.discountType === "percentage") {
+      discount =
+        (subtotal * coupon.discountValue) / 100;
+
+      if (
+        coupon.maxDiscountAmount &&
+        discount > coupon.maxDiscountAmount
+      ) {
+        discount = coupon.maxDiscountAmount;
+      }
+    }
+
+    if (coupon.discountType === "fixed") {
+      discount = coupon.discountValue;
+    }
+
+    setAppliedCoupon(coupon);
+    setDiscountAmount(discount);
+
+    toast.success("Coupon applied successfully");
+  };
   const paymentRetry = async (paymentPayload, user) => {
     if(!!paymentPayload && !!user) {
       localStorage.setItem("paymentPayload", JSON.stringify(paymentPayload));
@@ -118,7 +189,15 @@ const Checkout = () => {
         }
         const user = {...userAuth, name: addresses.find(addr => addr.isDefault)?.fullName || addresses[0]?.fullName || userAuth.name}
         const paymentResult = paymentRetry(paymentPayload, user);
+        const mailLoad = {
+          orderId: result.data._id,
+          userId: userAuth.id,
+          email: userAuth.email,
+          orderNumber: result.data.orderNumber
+        }
         console.log("Payment Result:", paymentResult);
+        const resMail = await sendOrderConfirmation(mailLoad);
+        console.log(resMail)
         setVisiblePaymentButton(false)
       } else {
         toast.error("Failed to place order");
@@ -388,6 +467,47 @@ const Checkout = () => {
                     />
                   </section>
 
+                </div>
+                <div className="mb-6">
+                  <h3 className="font-semibold mb-3">
+                    Apply Coupon
+                  </h3>
+
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={couponCode}
+                      onChange={(e) =>
+                        setCouponCode(e.target.value)
+                      }
+                      placeholder="Enter Coupon Code"
+                      className="
+                        flex-1
+                        border
+                        border-[#d8cdbd]
+                        rounded-xl
+                        px-4
+                        py-3
+                      "
+                    />
+
+                    <button
+                      onClick={applyCoupon}
+                      className="
+                        bg-[#245441]
+                        text-white
+                        px-5
+                        rounded-xl
+                      "
+                    >
+                      Apply
+                    </button>
+                  </div>
+                  {appliedCoupon && (
+                    <p className="text-green-600 mt-2">
+                      Coupon {appliedCoupon.code} applied
+                    </p>
+                  )}
                 </div>
 
                 {/* RIGHT SIDE */}

@@ -235,6 +235,7 @@ export default function ProductReviews() {
             </p>
 
           </div>
+          <div>
           {/* BACK */}
             <button
               onClick={() => navigate(`/products/detail/${productId}`)}
@@ -252,30 +253,27 @@ export default function ProductReviews() {
             >
               Back
             </button>
-
-          {/* ADD REVIEW BUTTON */}
-          <button
-            onClick={handleNavigateAddReview}
-            className="
-              flex
-              items-center
-              gap-2
-              px-5
-              py-3
-              rounded-2xl
-              bg-[#3d2c1d]
-              text-white
-              font-medium
-              hover:bg-[#2a1f15]
-              transition
-            "
-          >
-
-            <Plus size={18} />
-
-            Add Review
-
-          </button>
+              {/* ADD REVIEW BUTTON */}
+              <button
+                onClick={handleNavigateAddReview}
+                className="
+                  flex
+                  items-center
+                  gap-2
+                  px-5
+                  py-3
+                  rounded-2xl
+                  bg-[#3d2c1d]
+                  text-white
+                  font-medium
+                  hover:bg-[#2a1f15]
+                  transition
+                "
+              >
+                <Plus size={18} />
+                Add Review
+              </button>
+          </div>
 
         </div>
 

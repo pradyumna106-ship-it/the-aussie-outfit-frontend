@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Mail } from "lucide-react";
 import { toast } from "sonner";
+import { sendPasswordReset } from "../api/notification.api.js";
 
 // API
  import { forgotPassword } from "../api/auth.api.js";
@@ -25,6 +26,14 @@ export default function ForgotPassword() {
         console.log(payload)
         console.log("After call: ",email)
         const resetToken = res.data.resetToken;
+        const user = res.data.user;
+        const mailLoad = {
+          userId: user._id,
+          email,
+          resetToken
+        }
+        const resMail = await sendPasswordReset(mailLoad);
+        console.log(resMail)
       if (
         res.status === 200
       ) {

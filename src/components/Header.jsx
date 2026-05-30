@@ -14,7 +14,9 @@ import {
   User,
   Search,
   Heart,
+  BellIcon,
 } from "lucide-react";
+import logo from "../assets/logo-gumleaf.png"
 
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
@@ -23,6 +25,8 @@ const Header = ({
   brands = [],
   categories = [],
   onCartToggle,
+  setShowNotifications,
+  showNotifications
 }) => {
 
   const navigate = useNavigate();
@@ -285,7 +289,11 @@ const Header = ({
                 text-[#255441]
               "
             >
-              Everything Australia
+              <img
+                src={logo}
+                alt="Everything Australia"
+                width="120"
+              />
             </Link>
 
             {/* DESKTOP NAV */}
@@ -426,6 +434,12 @@ const Header = ({
                       hover:text-[#FFFDF6]
                       transition" onClick={() => navigate('/favourites')}>
                   <Heart className="w-5 h-5" />
+                </button>
+                <button className="relative
+                      text-[#255441]
+                      hover:text-[#FFFDF6]
+                      transition" onClick={() => setShowNotifications(!showNotifications)}>
+                  <BellIcon className="w-5 h-5" />
                 </button>
                 <button
                     onClick={() => onCartToggle()}

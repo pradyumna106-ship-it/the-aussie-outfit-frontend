@@ -24,3 +24,7 @@ export const getUserNotifications =
     API.get(
       `/notifications/user/${userId}`
     );
+
+export const updateNotification = 
+  (id,data) => 
+    API.put(`/notifications/${id}`,data)
