@@ -16,19 +16,13 @@ function Footer() {
         category
       });
 
-      alert(
-        "Subscribed successfully!"
-      );
-
       setEmail("");
-      setCategory("General");
+
+      alert("Subscribed successfully");
     } catch (error) {
-      alert(
-        error.response?.data?.message ||
-          "Subscription failed"
-      );
+      console.error(error);
     }
-  };
+};
   const footerData = {
     explore: [
       "Brands",
