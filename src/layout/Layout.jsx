@@ -21,37 +21,41 @@ function Layout() {
   const navigate = useNavigate()
   const { getNewAccessToken, isAuthenticated, loading, setLoading, user } = useAuth() 
   useEffect(() => {
-    if (!user) return;
-
     async function loadDatas() {
       try {
+        if (!user) return;
+
         const token = localStorage.getItem("token");
 
         if (isTokenExpired(token)) {
           await getNewAccessToken();
         }
 
-        const userId = user?.id;
+        const userId = user?.id || user?._id;
 
-        const [productRes, brandRes, categoryRes, userRes] =
-          await Promise.all([
-            getProducts(),
-            getBrands(),
-            getCategories(),
-            getUserNotifications(userId),
-          ]);
+        const productRes = await getProducts();
+        const brandRes = await getBrands();
+        const categoryRes = await getCategories();
+
+        let userRes = { data: { data: [] } };
+
+        if (userId) {
+          userRes = await getUserNotifications(userId);
+        }
 
         setProducts(productRes.data.data || []);
         setBrands(brandRes.data.data || []);
         setCategories(categoryRes.data.data || []);
         setProductCount(productRes.data.count || 0);
         setNotifications(userRes.data.data || []);
+
       } catch (error) {
-        console.error(error);
+        console.error("Layout API failed:", error);
       }
     }
+
     loadDatas();
-  }, [user]); // 🔥 IMPORTANT FIX
+  }, [user]);
     const markAsRead = async (notification) => {
 
       try {
