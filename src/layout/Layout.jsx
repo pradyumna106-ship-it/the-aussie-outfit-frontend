@@ -48,12 +48,23 @@ function Layout() {
     } catch (error) {
       console.error("Layout API failed:", error);
     }
-  }, [user, getNewAccessToken]);
+  }, []);
 
   // ✅ Call the memoized function inside useEffect
+  const fetchData = useCallback(async () => {
+    await loadDatas();
+  },[loadDatas])
   useEffect(() => {
-    loadDatas();
-  }, [loadDatas]);
+    const run = async () => {
+      await fetchData();
+    };
+    run();
+  }, [fetchData]);
+  useEffect(() => {
+    return () => {
+      if (desktopHoverTimeout.current) clearTimeout(desktopHoverTimeout.current);
+    };
+  }, []);
     const markAsRead = async (notification) => {
 
       try {
