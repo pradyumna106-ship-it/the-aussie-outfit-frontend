@@ -97,7 +97,6 @@ export const router = createBrowserRouter([
       { path: "admin/reports/sales",Component: SalesReportsPage},
       { path: "admin/products/:id", Component: ProductView},
       { path: "admin/manage-orders/:id/payment", Component: PaymentOperationView},
-      { path: "*", Component: Home },
     ],
   },
 ]);

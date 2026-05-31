@@ -39,7 +39,8 @@ function Layout() {
       if (userId) {
         userRes = await getUserNotifications(userId);
       }
-
+      console.log("product: ",productRes)
+      console.log("user: ",userRes)
       setProducts(productRes.data.data || []);
       setBrands(brandRes.data.data || []);
       setCategories(categoryRes.data.data || []);
