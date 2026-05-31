@@ -20,43 +20,40 @@ function Layout() {
   const [productCount, setProductCount] = useState(0);
   const navigate = useNavigate()
   const { getNewAccessToken, isAuthenticated, loading, setLoading, user } = useAuth() 
-  useEffect(() => {
-    async function loadDatas() {
-      try {
-        if (!user) return;
+  const loadDatas = useCallback(async () => {
+    try {
+      if (!user) return;
 
-        const token = localStorage.getItem("token");
-
-        if (isTokenExpired(token)) {
-          await getNewAccessToken();
-        }
-
-        const userId = user?.id || user?._id;
-
-        const productRes = await getProducts();
-        const brandRes = await getBrands();
-        const categoryRes = await getCategories();
-        console.log(productRes);
-        console.log(brandRes)
-        console.log(categoryRes)
-        let userRes = { data: { data: [] } };
-        if (userId) {
-          userRes = await getUserNotifications(userId);
-        }
-        console.log(userRes)
-        setProducts(productRes.data.data || []);
-        setBrands(brandRes.data.data || []);
-        setCategories(categoryRes.data.data || []);
-        setProductCount(productRes.data.count || 0);
-        setNotifications(userRes.data.data || []);
-
-      } catch (error) {
-        console.error("Layout API failed:", error);
+      const token = localStorage.getItem("token");
+      if (isTokenExpired(token)) {
+        await getNewAccessToken();
       }
-    }
 
+      const userId = user?.id || user?._id;
+
+      const productRes = await getProducts();
+      const brandRes = await getBrands();
+      const categoryRes = await getCategories();
+
+      let userRes = { data: { data: [] } };
+      if (userId) {
+        userRes = await getUserNotifications(userId);
+      }
+
+      setProducts(productRes.data.data || []);
+      setBrands(brandRes.data.data || []);
+      setCategories(categoryRes.data.data || []);
+      setProductCount(productRes.data.count || 0);
+      setNotifications(userRes.data.data || []);
+    } catch (error) {
+      console.error("Layout API failed:", error);
+    }
+  }, [user, getNewAccessToken]);
+
+  // ✅ Call the memoized function inside useEffect
+  useEffect(() => {
     loadDatas();
-  }, [user]);
+  }, [loadDatas]);
     const markAsRead = async (notification) => {
 
       try {
