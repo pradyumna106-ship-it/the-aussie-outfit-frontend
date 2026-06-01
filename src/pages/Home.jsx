@@ -64,7 +64,7 @@ export default function Home() {
     setCategories(data.categories);
     setProductCount(data.productCount);
     setNotifications(data.notifications);
-  }, [user, getNewAccessToken]);
+  }, []);
   useEffect(() => {
     async function loadBanners() {
       if (!isAuthenticated || !user) return;

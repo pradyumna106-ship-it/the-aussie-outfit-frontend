@@ -33,7 +33,7 @@ export function Products() {
     setCategories(data.categories);
     setProductCount(data.productCount);
     setNotifications(data.notifications);
-  }, [user, getNewAccessToken]);
+  }, []);
     useEffect(() => {
     loadDatas();
   }, [loadDatas]);
