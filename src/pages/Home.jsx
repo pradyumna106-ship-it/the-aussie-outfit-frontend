@@ -60,11 +60,12 @@ export default function Home() {
   useEffect(() => {
     const loadProducts = async () => {
       try {
-        const [resProduct, resCategories, resBrands] = await Promise.all([getProducts(),getCategories(),getBrands()]);
+        const [resProduct, resCategories, resBrands, resBanners] = await Promise.all([getProducts(),getCategories(),getBrands(),getBanners()]);
         setProducts(resProduct.data.data || []);
         setProductCount(resProduct.data.count || 0);
         setCategories(resCategories.data.data || []);
         setBrands(resBrands.data.data || [])
+        setBanners(resBanners.data.data || [])
       } catch (error) {
         console.error("Products Error:", error);
       }
