@@ -1,6 +1,6 @@
 import { Plus } from "lucide-react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import ProductTable from "../components/ProductTable";
 import CategoryTable from "../components/CategoryTable";
 import BrandTable from "../components/BrandTable";
@@ -10,7 +10,11 @@ import { deleteBrand, deleteCategory, deleteProduct } from "../api/product.api.j
 
 export default function ManageProducts() {
   const navigate = useNavigate();
-  const { brands, products, categories } = useOutletContext()
+  //const { brands, products, categories } = useOutletContext()
+  const location = useLocation()
+  const brands = location.state?.brands;
+  const products = location.state?.products;
+  const categories = location.state?.categories;
   const [activeSection, setActiveSection] = useState("products");
   const handleAddProduct = () => {
     navigate("/admin/add-product");

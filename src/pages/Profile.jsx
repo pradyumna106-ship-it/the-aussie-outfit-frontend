@@ -5,15 +5,17 @@ import { useOutletContext, useNavigate } from "react-router-dom";
 import { getUserByUserId,getAddressesByUserId, deleteAddress } from "../api/user.api.js";
 import { logoutUser } from "../api/auth.api.js";
 import { useAuth } from "../context/AuthContext";
+import { getBrandById } from "../api/product.api.js"
+import { getOrderById, getUserOrders } from "../api/order.api.js"
 export function Profile() {
-
   const navigate = useNavigate();
-
+  const [brand, setBrand] = useState(null);
+  const [preferredBrands, setPreferredBrands] = useState([]);
   const [userAuth] = useState(
     JSON.parse(localStorage.getItem("user")) || {}
   );
   const { logout } = useAuth();
-  const { brands } = useOutletContext();
+  //const { brands } = useOutletContext();
   // 1. Add location to user state (line ~14)
   const [user, setUser] = useState({
     id: "",
@@ -29,18 +31,16 @@ export function Profile() {
     gender: "",
     dateOfBirth: "",
   });
-
   // 2. Add orders state (after your other useState hooks, ~line 30)
   const [orders, setOrders] = useState([]);
   // EDIT STATES
   const [isEditing, setIsEditing] = useState(false);
-
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [location, setLocation] = useState("");
   const [addresses, setAddresses] = useState([]);
-
+  
   // FETCH PROFILE DATA
   const handleLogout = async () => {
     if(window.confirm("Are you sure you want to logout?")) {
@@ -68,14 +68,28 @@ export function Profile() {
     try {
 
       // USER PROFILE FROM USER SERVICE
-      const [resUser, resAddresses] = await Promise.all([
+      const [resUser, resAddresses, resOrders] = await Promise.all([
         getUserByUserId(userAuth.id),
-        getAddressesByUserId(userAuth.id)
+        getAddressesByUserId(userAuth.id),
+        getUserOrders(userAuth.id)
       ]);
 
         if (resUser.status === 200 || resAddresses.status === 200) {
           const profile = resUser.data.data;
           const fetchedAddresses = resAddresses.data.data;
+          const brandIds = profile.preferredBrands || [];
+
+        if (brandIds.length > 0) {
+            const brandResponses = await Promise.all(
+            brandIds.map((id) => getBrandById(id))
+          );
+
+          const brandsData = brandResponses.map(
+            (res) => res.data.data
+          );
+
+          setPreferredBrands(brandsData);
+        }
           setAddresses(fetchedAddresses);
           setUser({
                     id: profile._id || "",
@@ -115,7 +129,7 @@ export function Profile() {
 
                     // NEW FIELDS
                     preferredCategories: profile.preferredCategories || [],
-                    preferredBrands: profile.preferredBrands || [],
+                    preferredBrands: preferredBrands || profile.preferredBrands || [],
                     favoriteColors: profile.favoriteColors || [],
 
                     sizes: profile.sizes || {
@@ -141,6 +155,10 @@ export function Profile() {
     getProfileData();
 
   }, []);
+  const getBrand = async (id) => {
+    const res = await getBrandById(id);
+    setBrand(res.data.data|| null)
+  } 
 
   const editAddress = (address) => {
     navigate(`/edit-address/${address._id}`, { state: { address } });
@@ -326,12 +344,12 @@ export function Profile() {
                   </h3>
 
                   <div className="flex flex-wrap gap-3">
-                    {user.preferredBrands?.map((brand) => (
+                    {user.preferredBrands?.map((brand,index) => (
                       <span
-                        key={brand}
+                        key={index}
                         className="bg-[#255441] text-white px-4 py-2 rounded-full text-sm capitalize"
                       >
-                        {brands.find((b) => b._id === brand)?.name || brand.replaceAll("-", " ")}
+                        {brand.name}
                       </span>
                     ))}
                   </div>

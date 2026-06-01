@@ -77,16 +77,31 @@ export default function Register() {
   const [error, setError] = useState("");
   const [createdUser, setCreatedUser] = useState(null);
   const userLoad = JSON.parse(localStorage.getItem("user"));
-  const { brands, categories } = useOutletContext();
+  //const { brands, categories } = useOutletContext();
 
   // FIX 2: Safe split — profile.fullName may be undefined
   const nameParts = profile.fullName?.split(" ") ?? [];
   const first = nameParts[0] ?? "";
   const last = nameParts.slice(1).join(" ") ?? "";
-
   const [mode, setMode] = useState(
     profile?.sizes?.footwear?.region || "UK/INDIA"
   );
+  const [brands, setBrands] = useState([]);
+  const [categories, setCategories] = useState([]);
+  useEffect(() => {
+        const loadProducts = async () => {
+          try {
+            const [resCategories, resBrands] = await Promise.all([getCategories(),getBrands()]);
+            setCategories(resCategories.data.data || []);
+            setBrands(resBrands.data.data || [])
+            console.log("Brands: ",resBrands);
+            console.log("Categories: ",resCategories);
+          } catch (error) {
+            console.error("Products Error:", error);
+          }
+        };
+        loadProducts();
+      }, []);
 
   const shoeSizeRanges = {
     "UK/INDIA": { min: 3, max: 10 },

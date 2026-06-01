@@ -345,6 +345,7 @@ export function AdminDashboard() {
 
                 <Link
                   to="/admin/manage-products"
+                  state={{products,brands,categories}}
                   className="bg-[#255441] hover:bg-[#1e4636] transition-colors rounded-xl p-5 text-white flex items-center gap-4"
                 >
                   <Package className="w-8 h-8"/>
