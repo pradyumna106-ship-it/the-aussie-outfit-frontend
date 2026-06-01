@@ -601,9 +601,9 @@ export function AdminDashboard() {
                   </thead>
 
                   <tbody>
-                    {recentOrders.map((order) => (
+                    {recentOrders.map((order, index) => (
                       <tr
-                        key={order.id}
+                        key={index}
                         className="border-b border-[#f0e7d8]"
                       >
                         <td className="py-5 font-semibold text-[#1b1610]">

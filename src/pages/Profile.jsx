@@ -537,44 +537,50 @@ export function Profile() {
                       </thead>
 
                       <tbody>
-                        {orders.map((order) => (
-                          <tr
-                            key={order.id}
-                            className="border-b border-[#f1e8d9]"
-                          >
-                            <td className="py-5 text-[#255441] font-semibold">
-                              {order.id}
-                            </td>
+                          {orders.map((order, index) => (
+                            <tr
+                              key={index}
+                              className="border-b border-[#f1e8d9]"
+                            >
+                              <td className="py-5 text-[#255441] font-semibold">
+                                #{order.orderNumber}
+                              </td>
 
-                            <td className="py-5 text-[#635846]">
-                              {order.product}
-                            </td>
+                              <td className="py-5 text-[#635846]">
+                                {order.items?.map((item) => (
+                                  <div key={item.productName}>
+                                    {item.productName} x {item.quantity}
+                                  </div>
+                                ))}
+                              </td>
 
-                            <td className="py-5 text-[#635846]">
-                              {order.date}
-                            </td>
+                              <td className="py-5 text-[#635846]">
+                                {new Date(order.placedAt).toLocaleDateString()}
+                              </td>
 
-                            <td className="py-5">
-                              <span
-                                className={`
-                                  px-3 py-1 rounded-full text-xs font-semibold
-                                  ${
-                                    order.status === "Delivered"
-                                      ? "bg-green-100 text-green-700"
-                                      : "bg-yellow-100 text-yellow-700"
-                                  }
-                                `}
-                              >
-                                {order.status}
-                              </span>
-                            </td>
+                              <td className="py-5">
+                                <span
+                                  className={`
+                                    px-3 py-1 rounded-full text-xs font-semibold
+                                    ${
+                                      order.status === "delivered"
+                                        ? "bg-green-100 text-green-700"
+                                        : order.status === "cancelled"
+                                        ? "bg-red-100 text-red-700"
+                                        : "bg-yellow-100 text-yellow-700"
+                                    }
+                                  `}
+                                >
+                                  {order.status}
+                                </span>
+                              </td>
 
-                            <td className="py-5 text-[#1b1610] font-semibold">
-                              {order.amount}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
+                              <td className="py-5 text-[#1b1610] font-semibold">
+                                ₹{order.totalAmount}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
 
                     </table>
                   </div>
