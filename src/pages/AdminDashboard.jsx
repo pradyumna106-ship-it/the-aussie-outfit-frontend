@@ -23,8 +23,16 @@ import {
   createSalesReports
 } from "../api/admin.api.js";
 export function AdminDashboard() {
-  const { isAuthenticated, isAdmin, loading, setLoading } = useAuth();
-  const { productCount, products } = useOutletContext();
+  const { isAuthenticated, isAdmin, loading, setLoading, user, getNewAccessToken } = useAuth();
+  // const { productCount, products } = useOutletContext();
+  const [cartOpen, setCartOpen] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [brands, setBrands] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [productCount, setProductCount] = useState(0);
+
   const [orders, setOrders] = useState([]);
   const [orderCount, setOrderCount] = useState(0);
   const [customers, setCustomers] = useState([]);
@@ -32,6 +40,17 @@ export function AdminDashboard() {
   const [reviews, setReviews] = useState([]);
   const [reviewCount, setReviewCount] = useState(0);
   const navigate = useNavigate()
+  const loadDatas = useCallback(async () => {
+    const data = await fetchDatas(user, getNewAccessToken);
+    setProducts(data.products);
+    setBrands(data.brands);
+    setCategories(data.categories);
+    setProductCount(data.productCount);
+    setNotifications(data.notifications);
+  }, [user, getNewAccessToken]);
+    useEffect(() => {
+    loadDatas();
+  }, [loadDatas]);
   useEffect(() => {
 
     const loadData = async () => {

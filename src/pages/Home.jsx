@@ -33,12 +33,20 @@ const trustItems = [
 
 export default function Home() {
   const navigate = useNavigate();
-  const { isAuthenticated, user } = useAuth()
-  const {
-      products,
-      brands,
-      categories
-    } = useOutletContext();
+   const [cartOpen, setCartOpen] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [brands, setBrands] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [productCount, setProductCount] = useState(0);
+
+  const { isAuthenticated, user,getNewAccessToken } = useAuth()
+  // const {
+  //     products,
+  //     brands,
+  //     categories
+  //   } = useOutletContext();
   const [banners,setBanners] = useState([])
   const [pagination,setPagination] = useState({})
   console.log(products);
@@ -48,6 +56,14 @@ export default function Home() {
     navigate(`/products/detail/${product._id}`, { state: { product } });
     console.log('clicked to navigate')
   }
+  const loadDatas = useCallback(async () => {
+    const data = await fetchDatas(user, getNewAccessToken);
+    setProducts(data.products);
+    setBrands(data.brands);
+    setCategories(data.categories);
+    setProductCount(data.productCount);
+    setNotifications(data.notifications);
+  }, [user, getNewAccessToken]);
   useEffect(() => {
     async function loadBanners() {
       if (!isAuthenticated || !user) return;
@@ -58,6 +74,7 @@ export default function Home() {
       setPagination(res.data.pagination || {});
     }
     loadBanners()
+    loadDatas()
   },[])
   
   return (

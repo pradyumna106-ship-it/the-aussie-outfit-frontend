@@ -1,15 +1,23 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams } from "react-router-dom"
 import ProductCard from '../components/ProductCard';
 import { useNavigate } from "react-router-dom"
 import { useOutletContext } from 'react-router-dom';
 
 export function Products() {
-  const {
-      products,
-      brands,
-      categories
-    } = useOutletContext();
+  // const {
+  //     products,
+  //     brands,
+  //     categories
+  //   } = useOutletContext();
+   const [cartOpen, setCartOpen] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [brands, setBrands] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [productCount, setProductCount] = useState(0);
+  const { getNewAccessToken, user } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortBy, setSortBy] = useState('name');
   const { category, slug } = useParams();
@@ -18,6 +26,17 @@ export function Products() {
     navigate(`/products/detail/${product._id}`, {state: {product}})
     console.log('clicked to navigate')
   }
+  const loadDatas = useCallback(async () => {
+    const data = await fetchDatas(user, getNewAccessToken);
+    setProducts(data.products);
+    setBrands(data.brands);
+    setCategories(data.categories);
+    setProductCount(data.productCount);
+    setNotifications(data.notifications);
+  }, [user, getNewAccessToken]);
+    useEffect(() => {
+    loadDatas();
+  }, [loadDatas]);
   console.log(products)
   console.log(brands)
   console.log(categories)
