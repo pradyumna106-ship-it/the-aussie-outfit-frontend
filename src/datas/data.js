@@ -24,6 +24,11 @@ export async function fetchDatas(user, getNewAccessToken) {
     if (userId) {
       userRes = await getUserNotifications(userId);
     }
+    console.log("Products response:", productRes.data);
+    console.log("Brands response:", brandRes.data);
+    console.log("Categories response:", categoryRes.data);
+    console.log("Notifications response:", userRes.data);
+
 
     return {
       products: productRes.data.data || [],
