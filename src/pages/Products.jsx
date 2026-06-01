@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom"
 import { useOutletContext } from 'react-router-dom';
 import { fetchDatas } from "../datas/data.js"; // ✅ import here
 import { getProducts, getCategories, getBrands } from '../api/product.api.js';
+import { useAuth } from '../context/AuthContext.jsx';
 export function Products() {
   // const {
   //     products,

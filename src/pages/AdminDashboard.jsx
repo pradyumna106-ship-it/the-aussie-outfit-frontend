@@ -33,7 +33,6 @@ export function AdminDashboard() {
   const [brands, setBrands] = useState([]);
   const [categories, setCategories] = useState([]);
   const [productCount, setProductCount] = useState(0);
-
   const [orders, setOrders] = useState([]);
   const [orderCount, setOrderCount] = useState(0);
   const [customers, setCustomers] = useState([]);
