@@ -17,7 +17,11 @@ import {
   BellIcon,
 } from "lucide-react";
 import logo from "../assets/logo-gumleaf.png"
-import { getProducts, getBrands } from '../api/product.api.js';
+import {
+  getProducts,
+  getBrands,
+  getCategories
+} from '../api/product.api.js';
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 
@@ -58,7 +62,9 @@ const Header = ({
     }, []);
   const getSubCategories = (name) => {
     const parent = categories.find(
-      (cat) => cat.name === name
+      (cat) =>
+        cat.name?.toLowerCase() ===
+        name.toLowerCase()
     );
 
     return parent?.subCategories || [];
@@ -72,7 +78,10 @@ const Header = ({
   // =========================
   // NAVIGATION
   // =========================
-
+  console.log("Categories State:", categories);
+  console.log("Boots:", boots);
+  console.log("Hats:", hats);
+  console.log("Accessories:", accessories);
   const toSlug = (str) =>
     str.toLowerCase().replace(/\s+/g, "-");
 
