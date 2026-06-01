@@ -20,16 +20,14 @@ export default function ProductDetail() {
   const navigate = useNavigate();
   const { id } = useParams();
   const { addToCart } = useCart()
-  const { products } = useOutletContext();
+  //const { products } = useOutletContext();
   const location = useLocation()
-  const product = location.state?.product || products.find(
-      (p) => String(p._id) === String(id)
-    );
+  const product = location.state?.product
   const [quantity, setQuantity] = useState(1);
   const [rating, setRating] = useState(0);
   const [loading, setLoading] = useState(false);
     const { toggleFavourite, isFavourite } = useFavourite();
-    const fav = isFavourite(product._id);
+    const fav = product ? isFavourite(product._id) : false;
   console.log("Product from state:", product);
   useEffect(() => {
     async function fetchProduct() {
@@ -211,7 +209,7 @@ export default function ProductDetail() {
             >
               <Heart
                   className={`w-6 h-6 transition-colors ${
-                    isFavourite(product._id)
+                    isFavourite(product?._id)
                       ? "fill-red-500 text-red-500"
                       : "text-[#5f564a]"
                   }`}
