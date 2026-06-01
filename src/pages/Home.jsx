@@ -73,9 +73,10 @@ export default function Home() {
       const response = res;
       setBanners(response.data.data || []);
       setPagination(res.data.pagination || {});
+      loadDatas()
     }
     loadBanners()
-    await loadDatas()
+    
   },[])
   
   return (

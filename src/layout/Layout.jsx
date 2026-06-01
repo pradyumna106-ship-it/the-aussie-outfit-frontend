@@ -32,7 +32,7 @@ function Layout() {
   }, [user, getNewAccessToken]);
 
   useEffect(() => {
-    await loadDatas();
+    loadDatas();
   }, [loadDatas]);
     const markAsRead = async (notification) => {
 
