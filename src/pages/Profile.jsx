@@ -14,7 +14,7 @@ export function Profile() {
   const [userAuth] = useState(
     JSON.parse(localStorage.getItem("user")) || {}
   );
-  const { logout } = useAuth();
+  const { logout, isCustomer } = useAuth();
   //const { brands } = useOutletContext();
   // 1. Add location to user state (line ~14)
   const [user, setUser] = useState({
@@ -66,14 +66,24 @@ export function Profile() {
     const getProfileData = async () => {
       console.log(`userAuth: ${JSON.stringify(userAuth)}`);
     try {
-
-      // USER PROFILE FROM USER SERVICE
-      const [resUser, resAddresses, resOrders, resBrands] = await Promise.all([
+      const promises = [
         getUserByUserId(userAuth.id),
         getAddressesByUserId(userAuth.id),
-        getUserOrders(userAuth.id),
         getBrands()
-      ]);
+      ];
+
+      if (isCustomer) {
+        promises.push(getUserOrders(userAuth.id));
+      }
+
+      const responses = await Promise.all(promises);
+
+      const resUser = responses[0];
+      const resAddresses = responses[1];
+      const resBrands = responses[2];
+      const resOrders = isCustomer ? responses[3] : null;
+
+      setOrders(resOrders?.data?.data || []);
         if (resUser.status === 200 || resAddresses.status === 200) {
           const profile = resUser.data.data;
           const fetchedAddresses = resAddresses.data.data;
@@ -83,7 +93,7 @@ export function Profile() {
           );
 
           setAddresses(fetchedAddresses);
-          
+
           const ordersData = resOrders?.data?.data || [];
           setOrders(ordersData);
           setUser({
