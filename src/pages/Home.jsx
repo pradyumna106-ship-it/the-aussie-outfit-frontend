@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet-async';
-import { useEffect,useState } from 'react';
+import { useCallback, useEffect,useState } from 'react';
 import HeroSection from '../components/HeroSection';
 import { TrustCard } from '../components/TrustCard';
 import { CategoryCard } from '../components/CategoryCard';
@@ -10,6 +10,7 @@ import { useOutletContext } from "react-router-dom";
 import BrandMarquee from "../components/BrandMarquee";
 import { getBanners } from '../api/admin.api.js';
 import { useAuth } from '../context/AuthContext';
+import { fetchDatas } from "../datas/data.js"; // ✅ import here
 const trustItems = [
   {
     title: "43+ years",

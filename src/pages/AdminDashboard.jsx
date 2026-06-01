@@ -13,12 +13,13 @@ import {
   ImageIcon,
   BarChart3,
 } from 'lucide-react';
+import { fetchDatas } from "../datas/data.js"; // ✅ import here
 import { getOrders } from '../api/order.api.js';
 import { getUsers,getCurrentUser } from '../api/auth.api.js';
 import { getAllReviews } from '../api/review.api.js';
 import { useAuth } from '../context/AuthContext';
 import { useOutletContext } from 'react-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import {
   createSalesReports
 } from "../api/admin.api.js";

@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import { useParams } from "react-router-dom"
 import ProductCard from '../components/ProductCard';
 import { useNavigate } from "react-router-dom"
 import { useOutletContext } from 'react-router-dom';
-
+import { fetchDatas } from "../datas/data.js"; // ✅ import here
 export function Products() {
   // const {
   //     products,
