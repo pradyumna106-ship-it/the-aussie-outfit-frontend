@@ -78,13 +78,14 @@ export function Profile() {
           const profile = resUser.data.data;
           const fetchedAddresses = resAddresses.data.data;
           const allBrands = resBrands.data.data || [];
-
           const selectedBrands = allBrands.filter((brand) =>
             profile.preferredBrands?.includes(brand._id)
           );
 
           setAddresses(fetchedAddresses);
-
+          
+          const ordersData = resOrders?.data?.data || [];
+          setOrders(ordersData);
           setUser({
             id: profile._id || "",
             userId: profile.userId || "",
