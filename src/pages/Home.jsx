@@ -75,7 +75,7 @@ export default function Home() {
       setPagination(res.data.pagination || {});
     }
     loadBanners()
-    loadDatas()
+    await loadDatas()
   },[])
   
   return (

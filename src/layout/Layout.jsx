@@ -23,6 +23,7 @@ function Layout() {
   const { getNewAccessToken, isAuthenticated, loading, setLoading, user } = useAuth() 
   const loadDatas = useCallback(async () => {
     const data = await fetchDatas(user, getNewAccessToken);
+    console.log("datas: ", data)
     setProducts(data.products);
     setBrands(data.brands);
     setCategories(data.categories);
@@ -31,7 +32,7 @@ function Layout() {
   }, [user, getNewAccessToken]);
 
   useEffect(() => {
-    loadDatas();
+    await loadDatas();
   }, [loadDatas]);
     const markAsRead = async (notification) => {
 
