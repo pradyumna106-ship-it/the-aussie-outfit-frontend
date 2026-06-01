@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   Link,
@@ -48,6 +48,8 @@ const Header = ({
           const [resCategories, resBrands] = await Promise.all([getCategories(),getBrands()]);
           setCategories(resCategories.data.data || []);
           setBrands(resBrands.data.data || [])
+          console.log("Brands: ",resBrands);
+          console.log("Categories: ",resCategories);
         } catch (error) {
           console.error("Products Error:", error);
         }
