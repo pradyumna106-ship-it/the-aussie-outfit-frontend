@@ -12,27 +12,31 @@ export default function ManageProducts() {
   const navigate = useNavigate();
   //const { brands, products, categories } = useOutletContext()
   const location = useLocation()
-  const brands = location.state?.brands;
-  const products = location.state?.products;
-  const categories = location.state?.categories;
+  const brands = location.state?.brands || JSON.parse(localStorage.getItem("brands"));
+  const products = location.state?.products || JSON.parse(localStorage.getItem("products"));
+  const categories = location.state?.categories || JSON.parse(localStorage.getItem("categories"));
+  localStorage.setItem("products",JSON.stringify(products))
+  localStorage.setItem("brands",JSON.stringify(brands))
+  localStorage.setItem("categories",JSON.stringify(categories))
   const [activeSection, setActiveSection] = useState("products");
   const handleAddProduct = () => {
     navigate("/admin/add-product");
   };
   const productsWithCategory = products.map((product) => {
 
-    const matchedCategory = categories.find(
-      (category) =>
-        String(category._id) ===
-        String(product.categoryId?._id || product.categoryId)
-    );
+      const matchedCategory = categories.find(
+        (category) =>
+          String(category._id) ===
+          String(product.categoryId?._id || product.categoryId)
+      );
 
-    return {
-      ...product,
-      category: matchedCategory.name || null,
-    };
+      return {
+        ...product,
+        category: matchedCategory.name || null,
+      };
 
-});
+  });
+
   const handleEditProduct = (product) => {
     navigate(`/admin/edit-product/${product._id}`,{state:{product}});
   };

@@ -1,20 +1,24 @@
 import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Star, Search, ArrowLeft, Download } from "lucide-react";
 import { exportToCSV } from "../utils/exportUtils";
 import { useOutletContext } from "react-router-dom";
 export default function Reviews() {
   const navigate = useNavigate();
-
+  const { id } = useParams()
   const [search, setSearch] = useState("");
 
   const location = useLocation();
 
-  const reviewsStateForm = location.state?.reviews;
-  const { products } = useOutletContext();
+  const reviewsStateForm = location.state?.reviews || [];
+
   const [reviews, setReviews] = useState(
-  reviewsStateForm || []
-);
+    id
+      ? reviewsStateForm.filter(
+          (rev) => String(rev.productId) === String(id)
+        )
+      : reviewsStateForm
+  );
 
   const toggleStatus = (_id) => {
 
