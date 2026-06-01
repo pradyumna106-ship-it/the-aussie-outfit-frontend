@@ -238,9 +238,9 @@ export function Products() {
                   />
                   <span>All Categories</span>
                 </label>
-                  {categories.map((category) => (
+                  {categories.map((category,index) => (
                     <label
-                      key={category.slug}
+                      key={index}
                       className="
                         flex items-center gap-3 w-full
                         p-3 rounded-xl cursor-pointer
@@ -313,9 +313,9 @@ export function Products() {
               ) : (
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {filteredAndSortedProducts.map((product) => (
+                  {filteredAndSortedProducts.map((product,index) => (
                     <ProductCard
-                      key={product._id}
+                      key={index}
                       product={product}
                       onClick={() => handleNavigate(product)}
                     />

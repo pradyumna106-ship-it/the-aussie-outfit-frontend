@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   Link,
@@ -17,38 +17,43 @@ import {
   BellIcon,
 } from "lucide-react";
 import logo from "../assets/logo-gumleaf.png"
-
+import { getProducts, getBrands } from '../api/product.api.js';
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 
 const Header = ({
-  brands = [],
-  categories = [],
   onCartToggle,
   setShowNotifications,
   showNotifications
 }) => {
 
   const navigate = useNavigate();
-
   const { isAuthenticated, isAdmin, isCustomer } = useAuth();
-
   const [mobileOpen, setMobileOpen] =
     useState(false);
-
   const [openMobileMenu, setOpenMobileMenu] =
     useState(null);
-
   const { getCartCount } = useCart();
-
   const cartCount = getCartCount();
-
+  const [brands, setBrands] = useState([]);
+  const [categories, setCategories] = useState([]);
 
   // =========================
   // CATEGORY HELPERS
   // =========================
 
-
+  useEffect(() => {
+      const loadProducts = async () => {
+        try {
+          const [resCategories, resBrands] = await Promise.all([getCategories(),getBrands()]);
+          setCategories(resCategories.data.data || []);
+          setBrands(resBrands.data.data || [])
+        } catch (error) {
+          console.error("Products Error:", error);
+        }
+      };
+      loadProducts();
+    }, []);
   const getSubCategories = (name) => {
     const parent = categories.find(
       (cat) => cat.name === name
