@@ -57,27 +57,21 @@ export default function Home() {
     navigate(`/products/detail/${product._id}`, { state: { product } });
     console.log('clicked to navigate')
   }
-  const loadDatas = useCallback(async () => {
-    const data = await fetchDatas(user, getNewAccessToken);
-    setProducts(data.products);
-    setBrands(data.brands);
-    setCategories(data.categories);
-    setProductCount(data.productCount);
-    setNotifications(data.notifications);
-  }, []);
   useEffect(() => {
-    async function loadBanners() {
-      if (!isAuthenticated || !user) return;
-      const res =await getBanners();
-      console.log("Banners data: ",res.data);
-      const response = res;
-      setBanners(response.data.data || []);
-      setPagination(res.data.pagination || {});
-      loadDatas()
-    }
-    loadBanners()
-    
-  },[])
+    const loadProducts = async () => {
+      try {
+        const [resProduct, resCategories, resBrands] = await Promise.all([getProducts(),getCategories(),getBrands()]);
+        setProducts(resProduct.data.data || []);
+        setProductCount(resProduct.data.count || 0);
+        setCategories(resCategories.data.data || []);
+        setBrands(resBrands.data.data || [])
+      } catch (error) {
+        console.error("Products Error:", error);
+      }
+    };
+
+    loadProducts();
+  }, []);
   
   return (
     <>

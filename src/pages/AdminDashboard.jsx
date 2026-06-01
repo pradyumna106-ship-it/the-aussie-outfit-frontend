@@ -41,102 +41,87 @@ export function AdminDashboard() {
   const [reviews, setReviews] = useState([]);
   const [reviewCount, setReviewCount] = useState(0);
   const navigate = useNavigate()
-  const loadDatas = useCallback(async () => {
-    const data = await fetchDatas(user, getNewAccessToken);
-    setProducts(data.products);
-    setBrands(data.brands);
-    setCategories(data.categories);
-    setProductCount(data.productCount);
-    setNotifications(data.notifications);
-  }, []);
-    useEffect(() => {
-    loadDatas();
-  }, [loadDatas]);
+  useEffect(() => {
+      const loadProducts = async () => {
+        try {
+          const [resProduct, resCategories, resBrands] = await Promise.all([getProducts(),getCategories(),getBrands()]);
+          setProducts(resProduct.data.data || []);
+          setProductCount(resProduct.data.count || 0);
+          setCategories(resCategories.data.data || []);
+          setBrands(resBrands.data.data || [])
+        } catch (error) {
+          console.error("Products Error:", error);
+        }
+      };
+  
+      loadProducts();
+  });
   useEffect(() => {
 
     const loadData = async () => {
-
       try {
-
         setLoading(true);
-
         const [
           ordersRes,
           usersRes,
-          reviewsRes
+          reviewsRes,
+          resProduct, resCategories, resBrands
         ] = await Promise.all([
           getOrders(),
           getUsers(),
           getAllReviews(),
+          getProducts(),getCategories(),getBrands()
         ]);
-
         // ORDERS
         const ordersData =
           ordersRes?.data?.data || [];
-
         setOrders(ordersData);
-
         const totalOrders =
           ordersRes?.data?.count ||
           ordersData.length;
-
         setOrderCount(totalOrders);
-
         console.log(
           "All Orders:",
           ordersData
         );
-
         // USERS
         const users =
           usersRes?.data?.data || [];
-
         const customersData =
           users.filter(
             (user) =>
               user.roles.includes("customer")
           );
-
         setCustomers(customersData);
-
         const totalCustomers =
           customersData.length;
-
         setCustomerCount(totalCustomers);
-
         // REVIEWS
         const rev =
           reviewsRes?.data?.data || [];
-
         setReviews(rev);
-
         setReviewCount(
           reviewsRes?.data?.count ||
           rev.length
         );
-
         console.log(
           "All Reviews:",
           rev
         );
-
+          setProducts(resProduct.data.data || []);
+          setProductCount(resProduct.data.count || 0);
+          setCategories(resCategories.data.data || []);
+          setBrands(resBrands.data.data || [])
       } catch (error) {
-
         console.error(
           "Dashboard Load Error:",
           error
         );
-
       } finally {
-
         setLoading(false);
-
       }
-
     };
-
     loadData();
-
   }, []);
   if (loading) {
     return (

@@ -4,6 +4,7 @@ import ProductCard from '../components/ProductCard';
 import { useNavigate } from "react-router-dom"
 import { useOutletContext } from 'react-router-dom';
 import { fetchDatas } from "../datas/data.js"; // ✅ import here
+import { getProducts, getCategories, getBrands } from '../api/product.api.js';
 export function Products() {
   // const {
   //     products,
@@ -26,20 +27,24 @@ export function Products() {
     navigate(`/products/detail/${product._id}`, {state: {product}})
     console.log('clicked to navigate')
   }
-  const loadDatas = useCallback(async () => {
-    const data = await fetchDatas(user, getNewAccessToken);
-    setProducts(data.products);
-    setBrands(data.brands);
-    setCategories(data.categories);
-    setProductCount(data.productCount);
-    setNotifications(data.notifications);
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        const [resProduct, resCategories, resBrands] = await Promise.all([getProducts(),getCategories(),getBrands()]);
+        setProducts(resProduct.data.data || []);
+        setProductCount(resProduct.data.count || 0);
+        setCategories(resCategories.data.data || []);
+        setBrands(resBrands.data.data || [])
+      } catch (error) {
+        console.error("Products Error:", error);
+      }
+    };
+
+    loadProducts();
   }, []);
-    useEffect(() => {
-    loadDatas();
-  }, [loadDatas]);
-  console.log(products)
-  console.log(brands)
-  console.log(categories)
+  console.log("products:",products)
+  console.log("brands:",brands)
+  console.log("categories:",categories)
   const filteredAndSortedProducts = useMemo(() => {
 
   let filtered = [...products];
