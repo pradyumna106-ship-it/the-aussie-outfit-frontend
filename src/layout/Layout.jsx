@@ -10,6 +10,7 @@ import { useAuth } from "../context/AuthContext.jsx";
 import { isTokenExpired } from "../utils/token.js"
 import { updateNotification, getUserNotifications } from "../api/notification.api.js";
 import NotificationPanel from "../components/NotificationPanel"
+import { fetchDatas } from "../datas/data.js"; // ✅ import here
 function Layout() {
   const [cartOpen, setCartOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -21,55 +22,17 @@ function Layout() {
   const navigate = useNavigate()
   const { getNewAccessToken, isAuthenticated, loading, setLoading, user } = useAuth() 
   const loadDatas = useCallback(async () => {
-    try {
-      if (!user) return;
-
-      const token = localStorage.getItem("token");
-      if (isTokenExpired(token)) {
-        await getNewAccessToken();
-      }
-
-      const userId = user?.id || user?._id;
-
-      const [productRes, brandRes, categoryRes] = await Promise.all([
-        getProducts(),
-        getBrands(),
-        getCategories()
-      ]);
-
-      let userRes = { data: { data: [] } };
-      if (userId) {
-        userRes = await getUserNotifications(userId);
-      }
-
-      setProducts(productRes.data.data || []);
-      setBrands(brandRes.data.data || []);
-      setCategories(categoryRes.data.data || []);
-      setProductCount(productRes.data.count || 0);
-      setNotifications(userRes.data.data || []);
-    } catch (error) {
-      console.error("Layout API failed:", error);
-    }
+    const data = await fetchDatas(user, getNewAccessToken);
+    setProducts(data.products);
+    setBrands(data.brands);
+    setCategories(data.categories);
+    setProductCount(data.productCount);
+    setNotifications(data.notifications);
   }, [user, getNewAccessToken]);
 
-  // ✅ Just call it in useEffect
-
-
-  // ✅ Call the memoized function inside useEffect
-  const fetchData = useCallback(async () => {
-    await loadDatas();
-  },[loadDatas])
   useEffect(() => {
-    const run = async () => {
-      await fetchData();
-    };
-    run();
-  }, [fetchData]);
-  useEffect(() => {
-    return () => {
-      if (desktopHoverTimeout.current) clearTimeout(desktopHoverTimeout.current);
-    };
-  }, []);
+    loadDatas();
+  }, [loadDatas]);
     const markAsRead = async (notification) => {
 
       try {
