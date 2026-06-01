@@ -23,6 +23,7 @@ import { useEffect, useState, useCallback } from 'react';
 import {
   createSalesReports
 } from "../api/admin.api.js";
+import { getBrands, getCategories, getProducts } from '../api/product.api.js';
 export function AdminDashboard() {
   const { isAuthenticated, isAdmin, loading, setLoading, user, getNewAccessToken } = useAuth();
   // const { productCount, products } = useOutletContext();
@@ -40,21 +41,6 @@ export function AdminDashboard() {
   const [reviews, setReviews] = useState([]);
   const [reviewCount, setReviewCount] = useState(0);
   const navigate = useNavigate()
-  useEffect(() => {
-      const loadProducts = async () => {
-        try {
-          const [resProduct, resCategories, resBrands] = await Promise.all([getProducts(),getCategories(),getBrands()]);
-          setProducts(resProduct.data.data || []);
-          setProductCount(resProduct.data.count || 0);
-          setCategories(resCategories.data.data || []);
-          setBrands(resBrands.data.data || [])
-        } catch (error) {
-          console.error("Products Error:", error);
-        }
-      };
-  
-      loadProducts();
-  });
   useEffect(() => {
 
     const loadData = async () => {

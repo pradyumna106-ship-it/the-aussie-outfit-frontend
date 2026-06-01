@@ -5,7 +5,7 @@ import { useOutletContext, useNavigate } from "react-router-dom";
 import { getUserByUserId,getAddressesByUserId, deleteAddress } from "../api/user.api.js";
 import { logoutUser } from "../api/auth.api.js";
 import { useAuth } from "../context/AuthContext";
-import { getBrandById } from "../api/product.api.js"
+import { getBrandById, getBrands } from "../api/product.api.js"
 import { getOrderById, getUserOrders } from "../api/order.api.js"
 export function Profile() {
   const navigate = useNavigate();
@@ -68,84 +68,80 @@ export function Profile() {
     try {
 
       // USER PROFILE FROM USER SERVICE
-      const [resUser, resAddresses, resOrders] = await Promise.all([
+      const [resUser, resAddresses, resOrders, resBrands] = await Promise.all([
         getUserByUserId(userAuth.id),
         getAddressesByUserId(userAuth.id),
-        getUserOrders(userAuth.id)
+        getUserOrders(userAuth.id),
+        getBrands()
       ]);
-
         if (resUser.status === 200 || resAddresses.status === 200) {
           const profile = resUser.data.data;
           const fetchedAddresses = resAddresses.data.data;
-          const brandIds = profile.preferredBrands || [];
+          const allBrands = resBrands.data.data || [];
 
-        if (brandIds.length > 0) {
-            const brandResponses = await Promise.all(
-            brandIds.map((id) => getBrandById(id))
+          const selectedBrands = allBrands.filter((brand) =>
+            profile.preferredBrands?.includes(brand._id)
           );
 
-          const brandsData = brandResponses.map(
-            (res) => res.data.data
-          );
-
-          setPreferredBrands(brandsData);
-        }
           setAddresses(fetchedAddresses);
+
           setUser({
-                    id: profile._id || "",
-                    userId: profile.userId || "",
-                    fullName: `${profile.firstName || ""} ${profile.lastName || ""}`,
+            id: profile._id || "",
+            userId: profile.userId || "",
+            fullName: `${profile.firstName || ""} ${profile.lastName || ""}`,
 
-                    // AUTH SERVICE
-                    email: userAuth.email || "",
-                    phone: userAuth.phone || "",
-                    role: userAuth.roles?.[0] || "customer",
+            email: userAuth.email || "",
+            phone: userAuth.phone || "",
+            role: userAuth.roles?.[0] || "customer",
 
-                    // PROFILE
-                    location: fetchedAddresses?.find((addr) => addr.isDefault)
-                    ? `${fetchedAddresses.find((addr) => addr.isDefault)?.city}, 
-                      ${fetchedAddresses.find((addr) => addr.isDefault)?.state} 
-                      ${fetchedAddresses.find((addr) => addr.isDefault)?.postalCode}`
-                    : "Bangalore",
-                    profileImage: profile.profileImage || "",
-                    bio: profile.bio || "",
-                    gender: profile.gender || "",
+            location:
+              fetchedAddresses?.find((addr) => addr.isDefault)
+                ? `${fetchedAddresses.find((addr) => addr.isDefault)?.city},
+                  ${fetchedAddresses.find((addr) => addr.isDefault)?.state}
+                  ${fetchedAddresses.find((addr) => addr.isDefault)?.postalCode}`
+                : "Bangalore",
 
-                    dateOfBirth: profile.dateOfBirth
-                      ? new Date(profile.dateOfBirth).toLocaleDateString("en-US", {
-                          day: "2-digit",
-                          month: "long",
-                          year: "numeric",
-                        })
-                      : "",
+            profileImage: profile.profileImage || "",
+            bio: profile.bio || "",
+            gender: profile.gender || "",
 
-                    joined: profile.createdAt
-                      ? new Date(profile.createdAt).toLocaleDateString("en-US", {
-                          day: "2-digit",
-                          month: "long",
-                          year: "numeric",
-                        })
-                      : "",
+            dateOfBirth: profile.dateOfBirth
+              ? new Date(profile.dateOfBirth).toLocaleDateString("en-US", {
+                  day: "2-digit",
+                  month: "long",
+                  year: "numeric",
+                })
+              : "",
 
-                    // NEW FIELDS
-                    preferredCategories: profile.preferredCategories || [],
-                    preferredBrands: preferredBrands || profile.preferredBrands || [],
-                    favoriteColors: profile.favoriteColors || [],
+            joined: profile.createdAt
+              ? new Date(profile.createdAt).toLocaleDateString("en-US", {
+                  day: "2-digit",
+                  month: "long",
+                  year: "numeric",
+                })
+              : "",
 
-                    sizes: profile.sizes || {
-                      topWear: "",
-                      bottomWear: "",
-                      footwear: {
-                        region: "",
-                        size: "",
-                      },
-                    },
+            preferredCategories: profile.preferredCategories || [],
 
-                    lifestylePreferences: profile.lifestylePreferences || {
-                      budgetRange: "",
-                      shoppingFrequency: "",
-                    },
-                  });
+            // Store actual brand objects
+            preferredBrands: selectedBrands,
+
+            favoriteColors: profile.favoriteColors || [],
+
+            sizes: profile.sizes || {
+              topWear: "",
+              bottomWear: "",
+              footwear: {
+                region: "",
+                size: "",
+              },
+            },
+
+            lifestylePreferences: profile.lifestylePreferences || {
+              budgetRange: "",
+              shoppingFrequency: "",
+            },
+          });
         }
 
     } catch (error) {
