@@ -32,8 +32,10 @@ function Layout() {
   }, [user, getNewAccessToken]);
 
   useEffect(() => {
-    loadDatas();
-  }, [loadDatas]);
+    const run = async () => {
+      await  loadDatas();
+    }
+  }, []);
     const markAsRead = async (notification) => {
 
       try {
