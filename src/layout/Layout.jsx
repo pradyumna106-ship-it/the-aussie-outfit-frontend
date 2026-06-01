@@ -31,16 +31,17 @@ function Layout() {
 
       const userId = user?.id || user?._id;
 
-      const productRes = await getProducts();
-      const brandRes = await getBrands();
-      const categoryRes = await getCategories();
+      const [productRes, brandRes, categoryRes] = await Promise.all([
+        getProducts(),
+        getBrands(),
+        getCategories()
+      ]);
 
       let userRes = { data: { data: [] } };
       if (userId) {
         userRes = await getUserNotifications(userId);
       }
-      console.log("product: ",productRes)
-      console.log("user: ",userRes)
+
       setProducts(productRes.data.data || []);
       setBrands(brandRes.data.data || []);
       setCategories(categoryRes.data.data || []);
@@ -49,7 +50,10 @@ function Layout() {
     } catch (error) {
       console.error("Layout API failed:", error);
     }
-  }, []);
+  }, [user, getNewAccessToken]);
+
+  // ✅ Just call it in useEffect
+
 
   // ✅ Call the memoized function inside useEffect
   const fetchData = useCallback(async () => {
