@@ -49,7 +49,7 @@ deploy:
   needs: ["build_image", "frontend_build"]  # ✅ moved here
   environment:
     name: production
-    url: https://library-hub-frontend-snowy.vercel.app
+    url: https://the-aussie-outfit-frontend.vercel.app
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
       when: manual
