@@ -91,10 +91,9 @@ export function Profile() {
           const selectedBrands = allBrands.filter((brand) =>
             profile.preferredBrands?.includes(brand._id)
           );
-
           setAddresses(fetchedAddresses);
-
           const ordersData = resOrders?.data?.data || [];
+          console.log("Fetched orders:", ordersData);
           setOrders(ordersData);
           setUser({
             id: profile._id || "",
