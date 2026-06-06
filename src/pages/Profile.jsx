@@ -81,7 +81,7 @@ export function Profile() {
       const resBrands = responses[2];
       const resOrders = isCustomer || userAuth.roles?.includes("customer") ? responses[3] : null;
       
-      setOrders(resOrders.data?.data?.order || []);
+      setOrders(resOrders?.data?.data?.order || []);
         if (resUser.status === 200 || resAddresses.status === 200) {
           const profile = resUser.data.data;
           const fetchedAddresses = resAddresses.data.data;
@@ -90,7 +90,7 @@ export function Profile() {
             profile.preferredBrands?.includes(brand._id)
           );
           setAddresses(fetchedAddresses);
-          const ordersData = resOrders.data?.data?.order || [];
+          const ordersData = resOrders?.data?.data?.order || [];
           console.log("Fetched orders:", ordersData);
           setOrders(ordersData);
           setUser({
