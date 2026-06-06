@@ -71,18 +71,16 @@ export function Profile() {
         getAddressesByUserId(userAuth.id),
         getBrands()
       ];
-
       if (isCustomer || userAuth.roles?.includes("customer")) {
         promises.push(getUserOrders(userAuth.id));
       }
 
       const responses = await Promise.all(promises);
-
       const resUser = responses[0];
       const resAddresses = responses[1];
       const resBrands = responses[2];
       const resOrders = isCustomer || userAuth.roles?.includes("customer") ? responses[3] : null;
-
+      
       setOrders(resOrders.data?.data || []);
         if (resUser.status === 200 || resAddresses.status === 200) {
           const profile = resUser.data.data;
@@ -165,7 +163,23 @@ export function Profile() {
     const res = await getBrandById(id);
     setBrand(res.data.data|| null)
   } 
-
+  console.log("orders", orders, Array.isArray(orders));
+  console.log("addresses", addresses, Array.isArray(addresses));
+  console.log(
+    "preferredCategories",
+    user.preferredCategories,
+    Array.isArray(user.preferredCategories)
+  );
+  console.log(
+    "preferredBrands",
+    user.preferredBrands,
+    Array.isArray(user.preferredBrands)
+  );
+  console.log(
+    "favoriteColors",
+    user.favoriteColors,
+    Array.isArray(user.favoriteColors)
+  );
   const editAddress = (address) => {
     navigate(`/edit-address/${address._id}`, { state: { address } });
   }
