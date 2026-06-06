@@ -72,7 +72,7 @@ export function Profile() {
         getBrands()
       ];
 
-      if (isCustomer) {
+      if (isCustomer || userAuth.roles?.includes("customer")) {
         promises.push(getUserOrders(userAuth.id));
       }
 
@@ -81,9 +81,9 @@ export function Profile() {
       const resUser = responses[0];
       const resAddresses = responses[1];
       const resBrands = responses[2];
-      const resOrders = isCustomer ? responses[3] : null;
+      const resOrders = isCustomer || userAuth.roles?.includes("customer") ? responses[3] : null;
 
-      setOrders(resOrders?.data?.data || []);
+      setOrders(resOrders.data?.data || []);
         if (resUser.status === 200 || resAddresses.status === 200) {
           const profile = resUser.data.data;
           const fetchedAddresses = resAddresses.data.data;
@@ -92,7 +92,7 @@ export function Profile() {
             profile.preferredBrands?.includes(brand._id)
           );
           setAddresses(fetchedAddresses);
-          const ordersData = resOrders?.data?.data || [];
+          const ordersData = resOrders.data?.data || [];
           console.log("Fetched orders:", ordersData);
           setOrders(ordersData);
           setUser({
