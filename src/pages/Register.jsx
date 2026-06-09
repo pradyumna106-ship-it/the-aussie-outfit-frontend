@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams, useLocation, useOutletContext } from "rea
 import { User, Mail, Phone, Lock, Camera, Upload, ChevronRight, ChevronLeft } from "lucide-react";
 import { registerUser } from "../api/auth.api.js";
 import { createUser, createAddress, getUserByUserId, updateUser } from "../api/user.api.js";
+import { getCategories,getBrands } from "../api/product.api.js";
 
 // ===============================
 // INDEXED DB HELPERS
