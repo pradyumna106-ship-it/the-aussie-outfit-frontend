@@ -68,7 +68,7 @@ export default function Register() {
   const streamRef = useRef(null);
   const { id } = useParams();
   const location = useLocation();
-
+  const [fullName, setFullName] = useState("");
   // FIX 1: Safe profile fallback — never null
   const profile = location.state?.profile ?? {};
   const { login } = useAuth();
@@ -153,7 +153,7 @@ export default function Register() {
     },
   });
   const [addressData, setAddressData] = useState({
-    fullName: (first || profile?.firstName || "") + " " + (last || profile?.lastName || ""),
+    fullName: (first || profile?.firstName || "") + " " + (last || profile?.lastName || "") || fullName,
     phoneNumber:   formData?.phone || userLoad?.phone || "",
     addressLine1: "",
     addressLine2: "",
@@ -281,6 +281,13 @@ export default function Register() {
       }
       const res = await createAddress(payload);
       if (res.status === 201) {
+        if (!id) {
+          await clearFormDB();
+          navigate("/login");
+        } else {
+          await clearFormDB();
+          navigate("/profile");
+        }
         console.log("ADDRESS RESPONSE:", res.data);
       }
     } catch (err) {
@@ -366,7 +373,7 @@ export default function Register() {
           shoppingFrequency: formData.lifestylePreferences.shoppingFrequency,
         },
       };
-
+      setFullName(profilePayload.firstName + " " + profilePayload.lastName);
       // Remove userId key entirely if undefined (edit mode)
       if (profilePayload.userId === undefined) {
         delete profilePayload.userId;
