@@ -48,7 +48,9 @@ export default function Reviews() {
         ?.toLowerCase()
         .includes(search.toLowerCase())
   );
-
+  console.log("Reviews State from Location:", reviewsStateForm);
+  console.log("All Reviews:", reviews);
+  console.log("Filtered Reviews:", filteredReviews);
   return (
     <div className="min-h-screen bg-[#f6f1e7] p-8">
       {/* HEADER */}

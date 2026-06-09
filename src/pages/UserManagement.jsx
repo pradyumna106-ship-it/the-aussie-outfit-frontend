@@ -405,7 +405,7 @@ export default function UserManagement() {
 
                             <button
                             onClick={() => navigate(`/admin/reviews/${customer.id}`,{
-                                state: { reviews: reviews.filter((o) => o.userId === customer.id)}
+                                state: { reviews: reviews.filter((r) => r.userId === customer.id)}
                               })}
                               className="
                                 px-4
