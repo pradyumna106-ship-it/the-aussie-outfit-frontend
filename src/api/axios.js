@@ -1,5 +1,6 @@
 // src/api/axios.js
 import axios from "axios";
+import { refreshAccessToken } from "./auth.api";
 
 const API = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -33,9 +34,7 @@ API.interceptors.response.use(
       try {
         const refreshToken = localStorage.getItem("refreshToken");
 
-        const res = await axios.post("/api/auth/refresh", {
-          refreshToken,
-        });
+        const res = await refreshAccessToken({ refreshToken });
 
         const newToken = res.data.data.accessToken; // adjust path if needed
 
