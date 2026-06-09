@@ -369,8 +369,9 @@ export default function Register() {
         const res = await createUser(profilePayload);
         if (res.status === 201) {
           await clearFormDB();
-          navigate("/login");
+          //navigate("/login");
         }
+        console.log("CREATE RESPONSE:", res.data);
       } else {
         // EDIT mode
         const res = await updateUser(id, profilePayload);
