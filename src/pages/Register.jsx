@@ -343,7 +343,7 @@ export default function Register() {
       // }
 
       const profilePayload = {
-        userId: id ? undefined : createdUser._id,
+        userId: userLoad?.id || createdUser._id,
         firstName: formData.firstName,
         lastName: formData.lastName,
         gender: formData.gender,
