@@ -4,7 +4,7 @@ import { User, Mail, Phone, Lock, Camera, Upload, ChevronRight, ChevronLeft } fr
 import { registerUser } from "../api/auth.api.js";
 import { createUser, createAddress, getUserByUserId, updateUser } from "../api/user.api.js";
 import { getCategories,getBrands } from "../api/product.api.js";
-
+import {useAuth} from "../context/AuthContext";
 // ===============================
 // INDEXED DB HELPERS
 // ===============================
@@ -71,7 +71,7 @@ export default function Register() {
 
   // FIX 1: Safe profile fallback — never null
   const profile = location.state?.profile ?? {};
-
+  const { login } = useAuth();
   const [step, setStep] = useState(1);
   const [showCamera, setShowCamera] = useState(false);
   const [preview, setPreview] = useState(null);
@@ -312,6 +312,11 @@ export default function Register() {
         if (res.status === 201) {
           console.log("REGISTER RESPONSE:", res.data);
           setCreatedUser(res.data.data);
+          login({
+            token: res.data.data.accessToken,
+            refreshToken: res.data.data.refreshToken,
+            user: res.data.data.user
+          })
           setStep(2);
         }
       }
