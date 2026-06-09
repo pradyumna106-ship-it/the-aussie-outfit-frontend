@@ -13,6 +13,7 @@ export default function UserManagement() {
   const customersData = location.state?.customers || JSON.parse(localStorage.getItem("customers")) || [];
   const orders = location.state?.orders || JSON.parse(localStorage.getItem("orders")) || [];
   const reviews = location.state?.reviews || JSON.parse(localStorage.getItem("reviews")) || [];
+  console.log("Initial Customers Data:", customersData);
   useEffect(() => {
     async function fetchCustomerDetails() {
       console.log("Received Customers from Dashboard:", customersData);
