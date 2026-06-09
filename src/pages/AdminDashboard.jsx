@@ -71,12 +71,13 @@ export function AdminDashboard() {
         );
         // USERS
         const users =
-          usersRes?.data?.data || [];
+          usersRes?.data?.data|| usersRes?.data?.data?.users || [];
         const customersData =
           users.filter(
             (user) =>
               user.roles.includes("customer")
           );
+          console.log("All Customers:", customersData);
         setCustomers(customersData);
         const totalCustomers =
           customersData.length;
