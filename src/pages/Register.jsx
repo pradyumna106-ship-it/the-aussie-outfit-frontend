@@ -311,7 +311,7 @@ export default function Register() {
         const res = await registerUser(payload);
         if (res.status === 201) {
           console.log("REGISTER RESPONSE:", res.data);
-          setCreatedUser(res.data.data);
+          setCreatedUser(res.data.data.user);
           login({
             token: res.data.data.accessToken,
             refreshToken: res.data.data.refreshToken,
