@@ -12,13 +12,7 @@ export default function Reviews() {
 
   const reviewsStateForm = location.state?.reviews || [];
 
-  const [reviews, setReviews] = useState(
-    id
-      ? reviewsStateForm.filter(
-          (rev) => String(rev.productId) === String(id)
-        )
-      : reviewsStateForm
-  );
+  const [reviews, setReviews] = useState(reviewsStateForm);
 
   const toggleStatus = (_id) => {
 
