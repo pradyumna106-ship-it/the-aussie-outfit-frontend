@@ -60,12 +60,22 @@ export default function Home() {
   useEffect(() => {
     const loadProducts = async () => {
       try {
-        const [resProduct, resCategories, resBrands, resBanners] = await Promise.all([getProducts(),getCategories(),getBrands(),getBanners()]);
+        const promises = [getProducts(),getCategories(),getBrands()];
+        if (user && isAuthenticated) {
+          promises.push(getBanners());
+        }
+        const responses = await Promise.all(promises);
+        const resProduct = responses[0];
+        const resCategories = responses[1];
+        const resBrands = responses[2];
+        const resBanners = user && isAuthenticated ? responses[3] : null;
+
         setProducts(resProduct.data.data || []);
         setProductCount(resProduct.data.count || 0);
         setCategories(resCategories.data.data || []);
         setBrands(resBrands.data.data || [])
         setBanners(resBanners.data.data || [])
+        
       } catch (error) {
         console.error("Products Error:", error);
       }
