@@ -336,9 +336,14 @@ export default function Register() {
     }
 
     try {
+      // In create mode, createdUser must exist (set after step 1 registration)
+      if (!id && !createdUser?._id) {
+        setError("Session error: please go back to step 1 and try again.");
+        return;
+      }
+
       const profilePayload = {
-        // FIX 5: Use `id` in edit mode, createdUser._id in create mode
-        userId: id ? undefined : createdUser?._id,
+        userId: id ? undefined : createdUser._id,
         firstName: formData.firstName,
         lastName: formData.lastName,
         gender: formData.gender,
@@ -374,7 +379,7 @@ export default function Register() {
         const res = await createUser(profilePayload);
         if (res.status === 201) {
           await clearFormDB();
-          //navigate("/login");
+          setStep(3);
         }
         console.log("CREATE RESPONSE:", res.data);
       } else {
@@ -739,30 +744,27 @@ export default function Register() {
                   className={`${inputCls} pl-4`}
                 />
               </div>
+              <select
+                value={formData.lifestylePreferences.budgetRange}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    lifestylePreferences: {
+                      ...prev.lifestylePreferences,
+                      budgetRange: e.target.value,
+                    },
+                  }))
+                }
+                className={`${inputCls} pl-4`}
+              >
+                <option value="">Budget Range</option>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="premium">Premium</option>
+                <option value="luxury">Luxury</option>
+              </select>
 
-              <div className="grid grid-cols-2 gap-3">
-                <select
-                  value={formData.lifestylePreferences.budgetRange}
-                  onChange={(e) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      lifestylePreferences: {
-                        ...prev.lifestylePreferences,
-                        budgetRange: e.target.value,
-                      },
-                    }))
-                  }
-                  className={`${inputCls} pl-4`}
-                >
-                  {["weekly", "monthly", "occasionally"].map((freq) => (
-                    <option key={freq} value={freq}>
-                      {freq.charAt(0).toUpperCase() + freq.slice(1)} Shopper
-                    </option>
-                  ))}
-                  
-                </select>
-
-                <select
+              <select
                   value={formData.lifestylePreferences.shoppingFrequency}
                   onChange={(e) =>
                     setFormData((prev) => ({
@@ -775,14 +777,11 @@ export default function Register() {
                   }
                   className={`${inputCls} pl-4`}
                 >
-                  {["low", "medium", "premium", "luxury"].map((freq) => (
-                    <option key={freq} value={freq}>
-                      {freq.charAt(0).toUpperCase() + freq.slice(1)} Shopper
-                    </option>
-                  ))} 
+                  <option value="">Shopping Frequency</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="monthly">Monthly</option>
+                  <option value="occasionally">Occasionally</option>
                 </select>
-              </div>
-
               {/* Profile Image */}
               <div className="flex flex-col items-center gap-3">
                 {preview ? (
