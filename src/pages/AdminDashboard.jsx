@@ -71,7 +71,7 @@ export function AdminDashboard() {
         );
         // USERS
         const users =
-          usersRes?.data?.data|| usersRes?.data?.data?.users || [];
+          usersRes?.data?.data?.users || usersRes?.data?.data || [];
         const customersData =
           users.filter(
             (user) =>
