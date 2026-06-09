@@ -748,10 +748,12 @@ export default function Register() {
                   }
                   className={`${inputCls} pl-4`}
                 >
-                  <option value="">Budget Range</option>
-                  <option value="budget">Budget</option>
-                  <option value="mid-range">Mid Range</option>
-                  <option value="premium">Premium</option>
+                  {["weekly", "monthly", "occasionally"].map((freq) => (
+                    <option key={freq} value={freq}>
+                      {freq.charAt(0).toUpperCase() + freq.slice(1)} Shopper
+                    </option>
+                  ))}
+                  
                 </select>
 
                 <select
@@ -767,10 +769,11 @@ export default function Register() {
                   }
                   className={`${inputCls} pl-4`}
                 >
-                  <option value="">Shopping Frequency</option>
-                  <option value="weekly">Weekly</option>
-                  <option value="monthly">Monthly</option>
-                  <option value="yearly">Yearly</option>
+                  {["low", "medium", "premium", "luxury"].map((freq) => (
+                    <option key={freq} value={freq}>
+                      {freq.charAt(0).toUpperCase() + freq.slice(1)} Shopper
+                    </option>
+                  ))} 
                 </select>
               </div>
 
