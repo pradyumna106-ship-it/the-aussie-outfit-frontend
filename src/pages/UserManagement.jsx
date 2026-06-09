@@ -4,53 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { exportToCSV } from "../utils/exportUtils";
 import { getUserByUserId, getAddressesByUserId } from "../api/user.api.js";
 import { useEffect, useState } from "react";
-const customers = [
-  {
-    id: 1,
-    username: "Liam Wilson",
-    phone: "+61 412 458 221",
-    email: "liamwilson@gmail.com",
-    location: "Sydney",
-    gender: "Male",
-    dob: "1998-06-15",
-    joinedDate: "2025-01-14",
-    status: "Active",
-    totalOrders: 12,
-    totalSpend: "$4,250",
-    image:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e",
-  },
-  {
-    id: 2,
-    username: "Olivia Brown",
-    phone: "+61 487 112 984",
-    email: "oliviabrown@gmail.com",
-    location: "Melbourne",
-    gender: "Female",
-    dob: "1999-09-11",
-    joinedDate: "2025-02-02",
-    status: "Inactive",
-    totalOrders: 5,
-    totalSpend: "$1,340",
-    image:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330",
-  },
-  {
-    id: 3,
-    username: "Noah Taylor",
-    phone: "+61 401 667 983",
-    email: "noahtaylor@gmail.com",
-    location: "Perth",
-    gender: "Male",
-    dob: "1997-12-08",
-    joinedDate: "2025-03-21",
-    status: "Active",
-    totalOrders: 18,
-    totalSpend: "$6,880",
-    image:
-      "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d",
-  },
-];
+
 
 export default function UserManagement() {
   const navigate = useNavigate();
