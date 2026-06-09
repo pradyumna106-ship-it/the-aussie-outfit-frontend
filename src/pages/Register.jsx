@@ -337,10 +337,10 @@ export default function Register() {
 
     try {
       // In create mode, createdUser must exist (set after step 1 registration)
-      if (!id && !createdUser?._id) {
-        setError("Session error: please go back to step 1 and try again.");
-        return;
-      }
+      // if (!id && !createdUser?._id) {
+      //   setError("Session error: please go back to step 1 and try again.");
+      //   return;
+      // }
 
       const profilePayload = {
         userId: id ? undefined : createdUser._id,
