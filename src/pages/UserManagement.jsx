@@ -39,7 +39,8 @@ export default function UserManagement() {
                       )
 
                     ]);
-
+                  console.log("userRes", userRes.data);
+                  console.log("addressRes", addressRes.data);
                     return {
                       customer,
                       details:
@@ -50,6 +51,7 @@ export default function UserManagement() {
                   }
                 );
 
+
               const customerData =
                 await Promise.all(
                   customerPromises
@@ -59,7 +61,7 @@ export default function UserManagement() {
                 "Detailed Customer Data:",
                 customerData
               );
-
+              
               const formattedCustomers =
                 customerData.map(
                   ({
@@ -67,7 +69,7 @@ export default function UserManagement() {
                     details,
                     address
                   }) => {
-
+                    const customerAddress = address?.find((a) => a.userId === customer._id);
                     return {
 
                       id: customer._id,
@@ -82,8 +84,7 @@ export default function UserManagement() {
                       phone:
                         customer.phone,
 
-                      location: address.find((a) => a.userId === customer._id).city
-                        || "N/A",
+                      location: customerAddress?.city || "N/A",
 
                       gender:
                         details?.gender ||
