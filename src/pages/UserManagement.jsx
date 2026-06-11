@@ -69,7 +69,8 @@ export default function UserManagement() {
                     details,
                     address
                   }) => {
-                    const customerAddress = address?.find((a) => a.userId === customer._id);
+                    const addressList = Array.isArray(address) ? address : [];
+                    const customerAddress = addressList.find((a) => a.userId === customer._id);
                     return {
 
                       id: customer._id,
