@@ -111,31 +111,16 @@ export function Products() {
     // =========================
 
     else if (category) {
+      const matchedCategory = categories.find(
+        cat => cat.slug?.toLowerCase() === category?.toLowerCase()
+      );
 
-      const matchedCategory = categories.find(cat => cat.slug?.toLowerCase() === category?.toLowerCase());
-      console.log("URL category param:", category);
-      console.log("matchedCategory:", matchedCategory);
-      console.log("subCategoryIds:", matchedCategory?.subCategories?.map(sub => String(sub._id)));
-      console.log("product categoryIds:", products.map(p => String(p.categoryId?._id || p.categoryId)));
       if (!matchedCategory) return [];
 
-      // all subcategory ids
-      const subCategoryIds =
-        matchedCategory.subCategories?.map(
-          (sub) => String(sub._id)
-        ) || [];
-
-      filtered = filtered.filter((product) => {
-
-        const productCategoryId = String(
-          product.categoryId?._id ||
-          product.categoryId
-        );
-
-        return subCategoryIds.includes(
-          productCategoryId
-        );
-      });
+      // Compare directly against parent _id
+      filtered = filtered.filter(product =>
+        String(product.categoryId?._id || product.categoryId) === String(matchedCategory._id)
+      );
     }
 
     // =========================
