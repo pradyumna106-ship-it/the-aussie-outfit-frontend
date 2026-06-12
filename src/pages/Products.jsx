@@ -110,14 +110,15 @@ export function Products() {
     // /products/accessories
     // =========================
 
+    // TOP CATEGORY: /products/hats
     else if (category) {
       const matchedCategory = categories.find(
-        cat => cat.slug === category?.toLowerCase()
+        cat => cat.slug?.toLowerCase() === category?.toLowerCase()
       );
 
       if (!matchedCategory) return [];
 
-      // Compare directly against parent _id
+      // Direct parent _id comparison — no subCategories needed
       filtered = filtered.filter(product =>
         String(product.categoryId?._id || product.categoryId) === String(matchedCategory._id)
       );
@@ -129,10 +130,15 @@ export function Products() {
 
     // SIDEBAR FILTER — replace the existing selectedCategory block
     if (selectedCategory !== "all") {
-      const selectedParent = categories.find(
-        (cat) => String(cat._id) === String(selectedCategory)
+      filtered = filtered.filter((product) =>
+        String(product.categoryId?._id || product.categoryId) === String(selectedCategory)
       );
-
+    }
+    else if (selectedCategory === "all" && category) {
+      // If "All Categories" is selected but we're on a category page, we should still filter by that category
+      const selectedParent = categories.find(
+        (cat) => cat.slug === category
+      );
       if (selectedParent) {
         // Parent category selected → include all its subcategory products
         const subIds = selectedParent.subCategories?.map(
@@ -148,7 +154,7 @@ export function Products() {
         // It might already be a subcategory _id (future use)
         filtered = filtered.filter(
           (product) =>
-            String(product.categoryId?._id || product.categoryId) ===
+            String(product.categoryId) ===
             String(selectedCategory)
         );
       }
