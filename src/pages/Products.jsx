@@ -58,18 +58,18 @@ export function Products() {
 
   if (category === "brands" && slug) {
 
-      const matchedBrand = brands.find(
-        (brand) => brand.name === slug
+      const currentBrand = brands.find(
+        brand => brand.name?.toLowerCase() === slug?.toLowerCase()
       );
       
-      if (!matchedBrand) return [];
+      if (!currentBrand) return [];
       
       filtered = filtered.filter(
         (product) =>
           String(
             product.brandId?._id ||
             product.brandId
-          ) === String(matchedBrand._id)
+          ) === String(currentBrand._id)
       );
     }
 
@@ -203,11 +203,11 @@ export function Products() {
         </div>
         <div className="mb-12 bg-[#fffdf8] border border-[#d8cdbd] rounded-2xl p-6">
           <h2 className="text-2xl font-bold text-[#2b2b2b] mb-4">
-            About {(category === "brands" && slug)? brands.find((brand) => brand.name === slug)?.name : categories.find(cat => cat.slug === category)?.name}
+            About { brands.find((brand) => brand.name?.toLowerCase() === slug?.toLowerCase())?.name || categories.find(cat => cat.slug === category)?.name}
           </h2>
           <img
-            src={(category === "brands" && slug)? brands.find((brand) => brand.name === slug)?.logo : categories.find(cat => cat.slug === category)?.image}
-            alt={(category === "brands" && slug)? brands.find((brand) => brand.name === slug)?.name : categories.find(cat => cat.slug === category)?.name}
+            src={brands.find((brand) => brand.name?.toLowerCase() === slug?.toLowerCase())?.logo || categories.find(cat => cat.slug === category)?.image}
+            alt={brands.find((brand) => brand.name?.toLowerCase() === slug?.toLowerCase())?.name || categories.find(cat => cat.slug === category)?.name}
             className="w-full h-64 object-cover rounded-lg mb-6"
           />
           <div
@@ -216,7 +216,7 @@ export function Products() {
             }`}
           >
             <p className="text-[#6f6658] leading-relaxed">
-              {brands.find((brand) => brand.name === slug)?.description || categories.find(cat => cat.slug === category)?.description}
+              {brands.find((brand) => brand.name?.toLowerCase() === slug?.toLowerCase())?.description || categories.find(cat => cat.slug === category)?.description}
             </p>
           </div>
 
