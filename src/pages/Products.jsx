@@ -112,9 +112,7 @@ export function Products() {
 
     else if (category) {
 
-      const matchedCategory = categories.find(
-        (cat) => cat.slug === category
-      );
+      const matchedCategory = categories.find(cat => cat.slug?.toLowerCase() === category?.toLowerCase());
 
       if (!matchedCategory) return [];
 
@@ -141,15 +139,31 @@ export function Products() {
     // SIDEBAR FILTER
     // =========================
 
+    // SIDEBAR FILTER — replace the existing selectedCategory block
     if (selectedCategory !== "all") {
-
-      filtered = filtered.filter(
-        (product) =>
-          String(
-            product.categoryId?._id ||
-            product.categoryId
-          ) === String(selectedCategory)
+      const selectedParent = categories.find(
+        (cat) => String(cat._id) === String(selectedCategory)
       );
+
+      if (selectedParent) {
+        // Parent category selected → include all its subcategory products
+        const subIds = selectedParent.subCategories?.map(
+          (sub) => String(sub._id)
+        ) || [];
+
+        filtered = filtered.filter((product) =>
+          subIds.includes(
+            String(product.categoryId?._id || product.categoryId)
+          )
+        );
+      } else {
+        // It might already be a subcategory _id (future use)
+        filtered = filtered.filter(
+          (product) =>
+            String(product.categoryId?._id || product.categoryId) ===
+            String(selectedCategory)
+        );
+      }
     }
 
     // =========================
@@ -203,11 +217,11 @@ export function Products() {
         </div>
         <div className="mb-12 bg-[#fffdf8] border border-[#d8cdbd] rounded-2xl p-6">
           <h2 className="text-2xl font-bold text-[#2b2b2b] mb-4">
-            About { brands.find((brand) => brand.name?.toLowerCase() === slug?.toLowerCase())?.name || categories.find(cat => cat.slug === category)?.name}
+            About { brands.find((brand) => brand.name?.toLowerCase() === slug?.toLowerCase())?.name || categories.find(cat => cat.slug?.toLowerCase() === category?.toLowerCase())?.name}
           </h2>
           <img
-            src={brands.find((brand) => brand.name?.toLowerCase() === slug?.toLowerCase())?.logo || categories.find(cat => cat.slug === category)?.image}
-            alt={brands.find((brand) => brand.name?.toLowerCase() === slug?.toLowerCase())?.name || categories.find(cat => cat.slug === category)?.name}
+            src={brands.find((brand) => brand.name?.toLowerCase() === slug?.toLowerCase())?.logo || categories.find(cat => cat.slug?.toLowerCase() === category?.toLowerCase())?.image}
+            alt={brands.find((brand) => brand.name?.toLowerCase() === slug?.toLowerCase())?.name || categories.find(cat => cat.slug?.toLowerCase() === category?.toLowerCase())?.name}
             className="w-full h-64 object-cover rounded-lg mb-6"
           />
           <div
@@ -216,7 +230,7 @@ export function Products() {
             }`}
           >
             <p className="text-[#6f6658] leading-relaxed">
-              {brands.find((brand) => brand.name?.toLowerCase() === slug?.toLowerCase())?.description || categories.find(cat => cat.slug === category)?.description}
+              {brands.find((brand) => brand.name?.toLowerCase() === slug?.toLowerCase())?.description || categories.find(cat => cat.slug?.toLowerCase() === category?.toLowerCase())?.description}
             </p>
           </div>
 
