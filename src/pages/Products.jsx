@@ -112,7 +112,7 @@ export function Products() {
 
     else if (category) {
       const matchedCategory = categories.find(
-        cat => cat.slug?.toLowerCase() === category?.toLowerCase()
+        cat => cat.slug === category?.toLowerCase()
       );
 
       if (!matchedCategory) return [];
