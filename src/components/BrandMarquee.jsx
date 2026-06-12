@@ -24,7 +24,7 @@ const BrandMarquee = ({ brands = [] }) => {
           </h2>
 
           <button
-            onClick={() => navigate("/products/brands")}
+            onClick={() => navigate("/brands")}
             className="
               text-[#245441]
               font-semibold
