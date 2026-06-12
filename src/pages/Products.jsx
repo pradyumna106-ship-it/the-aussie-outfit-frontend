@@ -12,7 +12,7 @@ export function Products() {
   //     brands,
   //     categories
   //   } = useOutletContext();
-   const [cartOpen, setCartOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [products, setProducts] = useState([]);
@@ -24,6 +24,7 @@ export function Products() {
   const [sortBy, setSortBy] = useState('name');
   const { category, slug } = useParams();
   const navigate = useNavigate();
+  const [showFullDescription, setShowFullDescription] = useState(false);
   const handleNavigate = (product) => {
     navigate(`/products/detail/${product._id}`, {state: {product}})
     console.log('clicked to navigate')
@@ -183,6 +184,7 @@ export function Products() {
   return (
     <main className="min-h-screen bg-[#f6f1e6]">
       <div className="mx-auto max-w-7xl px-4 py-8 lg:px-8">
+        {/* Breadcrumb */}
 
         <div className="mb-4">
           <p className="text-sm text-[#7b6f5c]">
@@ -198,6 +200,34 @@ export function Products() {
           <p className="text-[#6f6658] max-w-3xl leading-relaxed">
             Shop premium Australian safety product and workwear.
           </p>
+        </div>
+        <div className="mb-12 bg-[#fffdf8] border border-[#d8cdbd] rounded-2xl p-6">
+          <h2 className="text-2xl font-bold text-[#2b2b2b] mb-4">
+            About {(category === "brands" && slug)? brands.find((brand) => brand.name === slug)?.name : categories.find(cat => cat.slug === category)?.name}
+          </h2>
+          <img
+            src={(category === "brands" && slug)? brands.find((brand) => brand.name === slug)?.logo : categories.find(cat => cat.slug === category)?.image}
+            alt={(category === "brands" && slug)? brands.find((brand) => brand.name === slug)?.name : categories.find(cat => cat.slug === category)?.name}
+            className="w-full h-64 object-cover rounded-lg mb-6"
+          />
+          <div
+            className={`overflow-hidden transition-all duration-300 ${
+              showFullDescription ? "max-h-[1000px]" : "max-h-32"
+            }`}
+          >
+            <p className="text-[#6f6658] leading-relaxed">
+              {brands.find((brand) => brand.name === slug)?.description || categories.find(cat => cat.slug === category)?.description}
+            </p>
+          </div>
+
+          <button
+            onClick={() =>
+              setShowFullDescription(!showFullDescription)
+            }
+            className="mt-4 text-[#245441] font-semibold hover:underline"
+          >
+            {showFullDescription ? "Read Less" : "Read More"}
+          </button>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8">
